@@ -274,24 +274,6 @@ def main():
 
 
 
-
-    # get all text from all children
-    # https://stackoverflow.com/a/34240893/5115219
-    #para = list(content.itertext())
-    # join text list
-    #text = "".join(para)
-    #print(text)
-
-
 if __name__ == "__main__":
      main()
 
-
-
-   #a = full.sort
- 
-    #for m in mlist.keys():
-    #    print (m, mlist[m])
-      #ll =  (topic.get('parent').rjust(3, "0") + ". "  + topic.get('id').rjust(3, "0") + ". " + topic.get('text'))
-        #ll = "A".rjust(4, "0")
-        #full.append (ll)
