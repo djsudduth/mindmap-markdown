@@ -1,7 +1,7 @@
 [![GitHub license](https://img.shields.io/github/license/djsudduth/keep-it-markdown)](https://github.com/djsudduth/keep-it-markdown/blob/main/LICENSE)
 
 # mindmap-markdown
-Mindmap-markdown or mindmd converts Simplemind mind maps to markdown pages as an extension to Simplemind's export function. The script will execute on Windows, MacOS or Linux.
+Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind maps to markdown pages as an extension to Simplemind's export function. The script will execute on Windows, MacOS or Linux.
 
 One of the key problems with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, mindmap-to-mindmap links and icons are not exported.
 
