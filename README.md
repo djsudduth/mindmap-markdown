@@ -3,7 +3,7 @@
 # mindmap-markdown
 Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind maps to markdown pages as an additional type to Simplemind's export function. Simplemind is an amazing mind mapping application that is free on mobile devices with significant capabilities to capture information. 
 
-One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
+One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
 
 ## Usage
 To run mindmd you need to first add your input and output paths to the `settings.cfg` file. However, you can simply test the script by running:
@@ -36,3 +36,7 @@ To add line numbers to each node in the markdown output use:
 ```
 
 Note that the media path is relative to the output path in `settings.cfg`
+
+###  Markdown
+The markdown output will have a tree structure that is well suited for either Obsidian or Logseq notes. Bullets are added to be compatible with Logseq - but future versions will have a flag to remove them if needed.
+
