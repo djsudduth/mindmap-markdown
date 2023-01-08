@@ -1,9 +1,9 @@
 [![GitHub license](https://img.shields.io/github/license/djsudduth/keep-it-markdown)](https://github.com/djsudduth/keep-it-markdown/blob/main/LICENSE)
 
 # mindmap-markdown
-Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind maps to markdown pages as an additional type to Simplemind's export function. The script will execute on Windows, MacOS or Linux.
+Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind maps to markdown pages as an additional type to Simplemind's export function. Simplemind is an amazing mind mapping application that is free on mobile devices with significant capabilities to capture information. 
 
-One of the key problems with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, mindmap-to-mindmap links and icons are not exported.
+One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
 
 ## Usage
 To run mindmd you need to first add your input and output paths to the `settings.cfg` file. However, you can simply test the script by running:
@@ -20,7 +20,7 @@ To specify a specfic input and output name:
 ```bash
 > python mindmd.py -i inputname.smmx -o outputname.md
 ```
-(paths will be pulled from the `settings.cfg` file)
+(paths will be pulled from the `settings.cfg` file and are not supported as part of the -i and -o switches)
 
 #### Batch
 To run a batch conversion on a simgle directory:
