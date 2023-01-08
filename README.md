@@ -40,3 +40,5 @@ Note that the media path is relative to the output path in `settings.cfg`
 ###  Markdown
 The markdown output will have a tree structure that is well suited for either Obsidian or Logseq notes. Bullets are added to be compatible with Logseq - but future versions will have a flag to remove them if needed.
 
+An example output file can be found in the `markdown` directory
+
