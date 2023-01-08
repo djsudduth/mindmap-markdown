@@ -35,3 +35,4 @@ To add line numbers to each node in the markdown output use:
 > python mindmd.py -n 1
 ```
 
+Note that the media path is relative to the output path in `settings.cfg`

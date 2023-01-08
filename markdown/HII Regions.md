@@ -1,16 +1,16 @@
 -  Nebulae Emissions
 	-  Types
 		-  Planetary Nebulae
-			![](5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+			![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
 		-  HII Regions
 			-  Orion Nebula
 				-- *The radius of the Orion Nebula is a few parsecs*
-				![](69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
+				![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
 			-  Dorados in the LMC
 				-- *Giant region on the order of 100 parsecs*
-				![](3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
+				![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
 		-  Wolf-Rayet Shells
-			![](9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
+			![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
 		-  AGNs
 	-  Basic Physics
 		-  Stromgren Sphere

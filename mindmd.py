@@ -157,7 +157,7 @@ def format_map(parent_value, tree_nodes, a, level, numbered):
                             else:
                                 a.append("\t"*(level+1) + "-- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
-                            a.append("\t"*(level+1) + "![](" + attr + ")\n")
+                            a.append("\t"*(level+1) + "![](" + media_path + attr + ")\n")
                             #media
                             shutil.copy2("images/" + attr, out_path + media_path + attr)
 
