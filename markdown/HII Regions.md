@@ -18,6 +18,8 @@
 				-- *4/3 pi R\^3\^ e n\`e\` n\`p\` a\`B\` (T(e)) = Q (N, Teff, L)  where Q is the ionization rate*
 				-   Cooling
 		-  Massive Stars
+
+			--  (*Relation Note: (12) emit large amounts of*)
 			-  UV Ionization
 				-  Ionization Bounded
 				-  Matter Bounded
