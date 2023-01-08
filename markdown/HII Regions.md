@@ -5,12 +5,13 @@
 		-  HII Regions
 			-  Orion Nebula
 				-- *The radius of the Orion Nebula is a few parsecs*
-				![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
+				-- *Outer Note: \*Energetic ultraviolet starlight (most of which comes from the hot \_class O6\_ star\_ Theta-1 Orionis C\_) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of \_emission lines\_. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.\**
+				- ![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
 			-  Dorados in the LMC
 				-- *Giant region on the order of 100 parsecs*
-				![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
+				- ![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
 		-  Wolf-Rayet Shells
-			![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
+			- ![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
 		-  AGNs
 	-  Basic Physics
 		-  Stromgren Sphere
