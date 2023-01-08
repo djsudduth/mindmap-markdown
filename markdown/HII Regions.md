@@ -1,7 +1,7 @@
 -  Nebulae Emissions
 	-  Types
 		-  Planetary Nebulae
-			![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
 		-  HII Regions
 			-  Orion Nebula
 				-- *The radius of the Orion Nebula is a few parsecs*
