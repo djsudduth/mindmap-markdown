@@ -106,7 +106,7 @@ def parse_mind_map(infile):
         for child in topic.findall("children/text/note"):
             topic_node.outernote += "Outer Note: " + (child.text and child.text.replace('\n',' ') or "None") 
         for relation in topic.findall("parent-relation/children/text/note"):
-            topic_node.relationnote += "Relation Note: (" + topic.get('parent') + ") " +  relation.text.replace('\n', ' ')
+            topic_node.relationnote += "Relation Text: (" + sm_nodes[int(topic.get('parent'))].title + ") " +  relation.text.replace('\n', ' ')
         for image in topic.findall("images/image"):
             topic_node.image += image.get('name').replace('\n', ' ') + ".png"
         for link in topic.findall("link"):
@@ -140,8 +140,9 @@ def format_map(parent_value, tree_nodes, a, level, numbered):
 
             #Outer notes only first
             if len(relnote) > 0:
-                if relnote.strip().startswith("Relation Note"):
-                    a.append("\n" + "\t"*(level) + "--  (*" + relnote + "*)\n")
+                if relnote.strip().startswith("Relation Text"):
+                    a.append("\n" + "\t"*(level) + "--> (*" + relnote + "*) -->\n")
+
             if numbered:
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
@@ -153,9 +154,9 @@ def format_map(parent_value, tree_nodes, a, level, numbered):
                     if attr:
                         if field.name != 'image' and field.name != 'embedded_image':
                             if field.name != 'link' and field.name != 'voice_memo':
-                                a.append("\t"*(level+1) + "-- *" + attr.strip() + "*\n")
+                                a.append("\t"*(level+1) + "- *" + attr.strip() + "*\n")
                             else:
-                                a.append("\t"*(level+1) + "-- [" + attr + "](" + attr.strip() + ")\n")                           
+                                a.append("\t"*(level+1) + "- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
                             a.append("\t"*(level+1) + "- ![](" + media_path + attr + ")\n")
                             #media
@@ -172,14 +173,14 @@ def format_relations(sm_nodes, infile):
     tree = ET.parse(infile)
     root = tree.getroot()
     output_list = []
-    output_list.append("\nRelations:\n")
+    output_list.append("\n\n- Relations:\n")
     relations =  root.findall("./mindmap/relations/relation")
     for relation in relations:
         full_relation = "- (" + relation.get('source') + ") " + sm_nodes[int(relation.get('source'))].title
         for note in relation.findall("children/text/note"):
             full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
-        output_list.append(full_relation + "\n")
+        output_list.append("\t" + full_relation + "\n")
     return output_list
 
 
