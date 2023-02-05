@@ -234,6 +234,7 @@ def main():
     numbered = args.numbered
     nums = False
 
+
     if numbered:
         nums = True
 

@@ -23,7 +23,7 @@ To specify a specfic input and output name:
 (paths will be pulled from the `settings.cfg` file and are not supported as part of the -i and -o switches)
 
 #### Batch
-To run a batch conversion on a simgle directory:
+To run a batch conversion on a single directory:
 ```bash
 > python mindmd.py -d
 ```
