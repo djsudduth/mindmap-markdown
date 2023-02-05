@@ -25,14 +25,14 @@ To specify a specfic input and output name:
 #### Batch
 To run a batch conversion on a simgle directory:
 ```bash
-> python mindmd.py -d 1
+> python mindmd.py -d
 ```
 Mindmd will convert all .smmx files in a flat directory defined in `settings.cfg` (no subdirectories) using the same file name to markdown
 
 #### Line Numbers
 To add line numbers to each node in the markdown output use:
 ```bash
-> python mindmd.py -n 1
+> python mindmd.py -n
 ```
 
 Note that the media path is relative to the output path in `settings.cfg`

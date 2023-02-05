@@ -221,20 +221,23 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--infile", "-i", type=str, required=False)
     parser.add_argument("--outfile", "-o", type=str, required=False)
-    parser.add_argument("--directory", "-d", type=str, required=False)
-    parser.add_argument("--numbered", "-n", type=str, required=False)
- 
+    parser.add_argument("--directory", "-d", default=False, action="store_true",
+                    help="Flag for batch processing")
+    parser.add_argument("--numbered", "-n", default=False, action="store_true",
+                    help="Flag for numbered nodes")
     args = parser.parse_args()
+
+
     in_name = args.infile
     out_name = args.outfile
     batch_dir = args.directory
     numbered = args.numbered
     nums = False
 
-    if numbered != None:
+    if numbered:
         nums = True
 
-    if batch_dir == None:
+    if batch_dir == False:
         if in_name == None:
             if test_file == '':
                 print ("No input file or test file name in settings.cfg provided!\n")
