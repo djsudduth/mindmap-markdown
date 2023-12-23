@@ -160,7 +160,11 @@ def format_map(parent_value, tree_nodes, a, level, numbered):
                         else:
                             a.append("\t"*(level+1) + "- ![](" + media_path + attr + ")\n")
                             #media
-                            shutil.copy2("images/" + attr, out_path + media_path + attr)
+                            try:
+                                shutil.copy2("images/" + attr, out_path + media_path + attr)
+                            except:
+                                print ("Image file 'images/" + attr + "' missing or not accessible!!")
+                                continue
 
             
             format_map (my_id, tree_nodes, a, level + 1, numbered)
