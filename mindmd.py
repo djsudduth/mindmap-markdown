@@ -97,7 +97,12 @@ def parse_mind_map(infile):
 
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
-        topic_node.title = topic.get('text').replace('\\N',' ')
+        topic_node.title = topic.get('text')
+        if topic_node.title is not None:
+            topic_node.title = topic_node.title.replace('\\N',' ')
+        else:
+            topic_node.title = ""
+ 
         topic_node.parent = topic.get('parent')
         #topic_node.guid = topic.get('guid')
       
