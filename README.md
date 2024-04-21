@@ -6,7 +6,9 @@ Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind ma
 One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
 
 ## Usage
-To run mindmd you need to first add your input and output paths to the `settings.cfg` file. However, you can simply test the script by running:
+To run mindmd you can either set your input and output paths in `settings.cfg` file, or, use the input `-i` or output `-o` switches to override the config file.
+
+There are default paths already set in the `settings.cfg` file. However, you can simply test the script by running:
 ```bash
 > python mindmd.py 
 ```
@@ -16,18 +18,22 @@ This will execute the example test .smmx file found in the `mindmaps` directory 
 All configurations should first be setup in the `settings.cfg` file. If you need to run test files simply change the `test_file_name` to your .smmx file.
 
 #### Switches
-To specify a specfic input and output name:
+To specify a specfic input and output path and name:
 ```bash
-> python mindmd.py -i inputname.smmx -o outputname.md
+> python mindmd.py -i mindmaps/inputname.smmx -o markdown/outputname.md
 ```
-(paths will be pulled from the `settings.cfg` file and are not supported as part of the -i and -o switches)
+(paths will be pulled from the `settings.cfg` file if the -i or -o switches are not used)  
+If you need to use the same directory as mindmd, prefix the files with `./` like `-i ./inputname.smmx`. If an input or output switch isn't provided then the settings path with be used. 
 
 #### Batch
 To run a batch conversion on a single directory:
 ```bash
 > python mindmd.py -d
 ```
-Mindmd will convert all .smmx files in a flat directory defined in `settings.cfg` (no subdirectories) using the same file name to markdown
+Mindmd will convert all .smmx files in a flat directory defined in `settings.cfg` (no subdirectories) using the same file name to markdown. You can also set the input directory with the `-i` switch: 
+```bash
+> python mindmd.py -d -i mysmmxfolder
+```
 
 #### Line Numbers
 To add line numbers to each node in the markdown output use:

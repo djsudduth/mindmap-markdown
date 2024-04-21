@@ -6,6 +6,7 @@ import shutil
 import configparser
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, fields
+from pathlib import Path
 
 SMMAP_TOPICS = "./mindmap/topics/topic"
 SM_GUID = "./mindmap/meta/guid"
@@ -41,6 +42,24 @@ class Node:
     voice_memo: str = ""
 
 
+@dataclass
+class FilePaths:
+    in_path_exists: bool = False
+    in_file_exists: bool = False
+    in_seems_filelike: bool = False
+    in_path: str = ""
+    in_file: str = ""
+    in_full_path: str = ""
+    out_path_exists: bool = False
+    out_file_exists: bool = False
+    out_seems_filelike: bool = False
+    out_path: str = ""
+    out_file: str = ""
+    out_full_path: str = ""
+    out_full_media_path: str = ""
+
+
+
 node_dict = {
     "id": "-1",
     "object": None,
@@ -48,9 +67,57 @@ node_dict = {
     "note": "",
  }
 
+media_files = []
+
 def unzip_file(zippath, filepath):
     extracted_file = zipfile.ZipFile(zippath)
     extracted_file.extractall(filepath)
+
+def validate_files(in_filepath, out_filepath, media_path):
+    fs = FilePaths()
+    i = check_file_path(in_filepath)
+    fs.in_path_exists = i[0]
+    fs.in_file_exists = i[1]  
+    fs.in_seems_filelike = i[2]
+    fs.in_full_path = os.path.join(in_filepath, '').replace("\\","/")
+    if fs.in_seems_filelike:
+        fs.in_full_path = fs.in_full_path.rstrip('/')
+    fs.in_path = i[3]
+    fs.in_file = i[4]
+    i = check_file_path(out_filepath)
+    fs.out_path_exists = i[0]
+    fs.out_file_exists = i[1]  
+    fs.out_seems_filelike = i[2]
+    fs.out_full_path = os.path.join(out_filepath, '').replace("\\","/")
+    if fs.out_seems_filelike:
+        fs.out_full_path = fs.out_full_path.rstrip('/')
+    fs.out_path = i[3]
+    fs.out_file = i[4]
+    fs.out_full_media_path = fs.out_path + media_path
+    return (fs)
+
+
+
+def check_file_path(filepath):
+    foundfile = False
+    foundpath = False
+    seemslikefile = False
+
+    if filepath is not None:
+        if "." not in filepath:
+            filepath = os.path.join(filepath, '').replace("\\","/")
+        else:
+            seemslikefile = True
+        pathname, filename = os.path.split(filepath)    
+        pathname = os.path.join(pathname, '').replace("\\","/")
+        if os.path.exists(pathname):
+            foundpath = True
+            a = os.path.isfile(filepath)
+            if seemslikefile and os.path.isfile(filepath):
+                foundfile = True
+
+    return(foundpath, foundfile, seemslikefile, pathname, filename)
+
 
 
 def load_configs():
@@ -80,9 +147,10 @@ def parse_mind_map(infile):
     sm_nodes = []
     sorted_nodes = []
 
-    tree = ET.parse(infile)
+    xml_file = open(infile, 'r', encoding='utf-8')
+    tree = ET.parse(xml_file)
 
-    print ("Parsing SimpleMind Map...")     
+    #print ("Parsing SimpleMind Map...")     
     root = tree.getroot()
 
     meta = root.findall(SM_GUID)
@@ -97,7 +165,11 @@ def parse_mind_map(infile):
 
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
-        topic_node.title = topic.get('text').replace('\\N',' ')
+        topic_node.title = topic.get('text')
+        if topic_node.title is not None:
+            topic_node.title = topic_node.title.replace('\\N',' ')
+        else:
+            topic_node.title = ""
         topic_node.parent = topic.get('parent')
         #topic_node.guid = topic.get('guid')
       
@@ -126,11 +198,11 @@ def parse_mind_map(infile):
 
 
 
-def format_map(parent_value, tree_nodes, a, level, numbered):
+def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf):
 
     configdict = load_configs()
-    in_path = configdict["input_path"]
-    out_path = configdict["output_path"]
+    in_path = os.path.join(os.path.split(infile)[0], '').replace("\\","/") #configdict["input_path"]
+    out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
     media_path = configdict["media_path"]
 
     for node in tree_nodes:
@@ -158,12 +230,16 @@ def format_map(parent_value, tree_nodes, a, level, numbered):
                             else:
                                 a.append("\t"*(level+1) + "- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
-                            a.append("\t"*(level+1) + "- ![](" + media_path + attr + ")\n")
-                            #media
-                            shutil.copy2("images/" + attr, out_path + media_path + attr)
+                            n = 44
+                            mediafiles = [(attr[i:i+n]) for i in range(0, len(attr), n)]
+                            for mfile in mediafiles:
+                                a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
+                                #media
+                                media_files.append(mfile)
+                                #shutil.copy2("images/" + attr, out_path + media_path + attr)
 
             
-            format_map (my_id, tree_nodes, a, level + 1, numbered)
+            format_map (my_id, tree_nodes, a, level + 1, numbered, in_path, out_path, vf)
     return a    
 
 
@@ -184,14 +260,14 @@ def format_relations(sm_nodes, infile):
     return output_list
 
 
-def write_output(infile, outfile, numbered):
+def write_output(infile, outfile, numbered, vf):
     # load smmx xml content
     sm_nodes = parse_mind_map(infile)
 
     #output
     f = open(outfile,"w", encoding='utf8')
     a = []
-    outline = format_map("-1", sm_nodes, a, 0, numbered)
+    outline = format_map("-1", sm_nodes, a, 0, numbered, infile, outfile, vf)
     for map in outline:
         f.write(map)
         #media
@@ -207,7 +283,7 @@ def write_output(infile, outfile, numbered):
 
 def main():
 
-
+    print ("\n** Mindmap Markdown v-0.0.2 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -234,9 +310,24 @@ def main():
     numbered = args.numbered
     nums = False
 
-
     if numbered:
         nums = True
+
+
+    if in_name != None:
+        in_path = in_name
+
+    if out_name != None:
+        out_path = out_name
+
+
+    vs = validate_files(in_path, out_path, media_path)
+    if vs.in_path == '':
+        in_path = configdict["input_path"] + in_path
+    if vs.out_path == '':
+        out_path = configdict["output_path"] + out_path
+    vs = validate_files(in_path, out_path, media_path)
+
 
     if batch_dir == False:
         if in_name == None:
@@ -245,26 +336,51 @@ def main():
                 exit()
             else:
                 infile = in_path + test_file
+                vs.in_file = test_file
         else:
-            infile = in_path + in_name
+            if vs.in_path_exists == False or vs.in_file_exists == False:
+                print ("Input file path and/or name are invalid or missing!\n")
+                exit()
+            infile = vs.in_full_path
 
         if out_name == None:
-            ext = os.path.splitext(test_file)
-            if out_path == '':
-                outfile = in_path + ext[0] + ".md"
-            else:
-                outfile = out_path + ext[0] + ".md"
+            ext = os.path.splitext(vs.in_file)
+            outfile = vs.out_path + ext[0] + ".md"
+       
+            #ext = os.path.splitext(test_file)
+            #if out_path == '':
+            #    outfile = in_path + ext[0] + ".md"
+            #else:
+            #    outfile = out_path + ext[0] + ".md"
 
         else:
-            outfile = out_path + out_name 
-
+            if vs.out_path_exists == False or vs.out_seems_filelike == False:
+                print ("Output file path and/or name are invalid\n")
+                exit()
+            outfile = vs.out_full_path
+        print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
         unzip_file(infile, '.')
-        write_output(DEFAULT_MINDMAP, outfile, nums)
+        write_output(DEFAULT_MINDMAP, outfile, nums, vs)
 
     else:
-        batch_dir = out_path
+        if in_name != None:
+            if vs.in_path_exists == False or vs.in_seems_filelike == True:
+                print ("Invalid path for batch output: " + vs.in_full_path + " - be sure your input path exists and doesn't contain a file name!")
+                exit()
+            else:
+                in_path = vs.in_full_path #in_name
+ 
+
+        if out_name != None:
+            if vs.out_path_exists == False or vs.out_seems_filelike == True:
+                print ("Invalid path for batch output: " + vs.out_full_path + " - be sure your destination path exists and doesn't contain a file name!")
+                exit()
+            else:
+                batch_dir = vs.out_full_path #os.path.join(out_name, '').replace("\\","/")
+        else:
+            batch_dir = out_path
         for filename in os.listdir(in_path):
-            f = os.path.join(in_path, filename).replace("\\","/")
+            f = os.path.join(in_path, filename) #.replace("\\","/")
             # checking if it is a file
             if os.path.isfile(f):
                 ext = os.path.splitext(filename)
@@ -274,8 +390,18 @@ def main():
                     except zipfile.BadZipfile:
                         continue
                     outfile = ext[0] + ".md"
-                    print (outfile)
-                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums)
+                    print ("Mindmap: " + f + " ----> Markdown: " + batch_dir + outfile)
+                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs)
+
+    if not os.path.exists(vs.out_full_media_path):
+        os.makedirs(vs.out_full_media_path)
+    for media in media_files:
+        try:
+            shutil.copy2("images/" + media, vs.out_full_media_path + media)
+        except:
+            print ("Image file 'images/" + media + "' missing or not accessible!!")
+            continue
+
 
 
 
