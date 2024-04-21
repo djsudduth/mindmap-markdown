@@ -165,11 +165,7 @@ def parse_mind_map(infile):
 
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
-        topic_node.title = topic.get('text')
-        if topic_node.title is not None:
-            topic_node.title = topic_node.title.replace('\\N',' ')
-        else:
-            topic_node.title = ""
+        topic_node.title = topic.get('text').replace('\\N',' ')
         topic_node.parent = topic.get('parent')
         #topic_node.guid = topic.get('guid')
       
@@ -230,13 +226,9 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
                             else:
                                 a.append("\t"*(level+1) + "- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
-                            n = 44
-                            mediafiles = [(attr[i:i+n]) for i in range(0, len(attr), n)]
-                            for mfile in mediafiles:
-                                a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
-                                #media
-                                media_files.append(mfile)
-                                #shutil.copy2("images/" + attr, out_path + media_path + attr)
+                            a.append("\t"*(level+1) + "- ![](" + media_path + attr + ")\n")
+                            #media
+                            shutil.copy2("images/" + attr, out_path + media_path + attr)
 
             
             format_map (my_id, tree_nodes, a, level + 1, numbered, in_path, out_path, vf)
