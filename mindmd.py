@@ -226,9 +226,16 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
                             else:
                                 a.append("\t"*(level+1) + "- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
-                            a.append("\t"*(level+1) + "- ![](" + media_path + attr + ")\n")
-                            #media
-                            shutil.copy2("images/" + attr, out_path + media_path + attr)
+                            n = 44
+                            mfiles = [(attr[i:i+n]) for i in range(0, len(attr), n)]
+                            for mfile in mfiles:
+                                a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
+                                #media
+                                try:
+                                    shutil.copy2("images/" + mfile, out_path + media_path + mfile)
+                                except:
+                                    print ("Image file 'images/" + mfile + "' missing or not accessible!!")
+                                    continue
 
             
             format_map (my_id, tree_nodes, a, level + 1, numbered, in_path, out_path, vf)
