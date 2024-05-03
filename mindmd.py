@@ -165,7 +165,7 @@ def parse_mind_map(infile):
 
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
-        topic_node.title = topic.get('text').replace('\\N',' ')
+        #topic_node.title = topic.get('text').replace('\\N',' ')
         topic_node.title = topic.get('text')
         if topic_node.title is not None:
             topic_node.title = topic_node.title.replace('\\N',' ')
@@ -288,7 +288,7 @@ def write_output(infile, outfile, numbered, vf):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.0.2 **\n")
+    print ("\n** Mindmap Markdown v-0.0.3 **\n")
        #try:
             #return(self._configdict[key])
 
