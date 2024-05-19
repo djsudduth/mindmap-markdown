@@ -1,36 +1,105 @@
 -  Nebulae Emissions
+	- *500.00*
+	- *500.00*
+	- *22bb7eaedc55d54c*
 	-  Types
+		- *440.03*
+		- *304.39*
+		- *efe52f90c8c773be*
 		-  Planetary Nebulae
 			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+			- *-116.60,-26.48;*
+			- *5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png*
+			- *305.87*
+			- *170.66*
+			- *ba7c04218600a21c*
 		-  HII Regions
+			- *592.01*
+			- *158.35*
+			- *1fae0571c1adf800*
 			-  Orion Nebula
 				- *The radius of the Orion Nebula is a few parsecs*
 				- *Outer Note: Energetic ultraviolet starlight (most of which comes from the hot \_class O6\_ star\_ Theta-1 Orionis C\_) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of \_emission lines\_. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.*
 				- ![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
+				- *470.00*
+				- *-53.88*
+				- *679d97078da52b98*
 			-  Dorados in the LMC
 				- *Giant region on the order of 100 parsecs*
 				- ![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
+				- *130.94,3.99;*
+				- *3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png*
+				- *880.51*
+				- *90.64*
+				- *777dbb79db793ac3*
 		-  Wolf-Rayet Shells
 			- ![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
+			- *126.05,18.44;*
+			- *9b0722981ac97bcc14ef5440d1fd68265447fcab.png*
+			- *679.07*
+			- *291.56*
+			- *60e4729149fcf401*
 		-  AGNs
+			- *666.43*
+			- *388.55*
+			- *88cd4c4f6ecfc741*
 	-  Basic Physics
+		- *811.80*
+		- *547.06*
+		- *3810e6478f2862fc*
 		-  Stromgren Sphere
+			- *1094.25*
+			- *714.68*
+			- *2a4358835eb78230*
 			-  Emission rate vs recombination rate
 				- *4/3 pi R\^3\^ e n\`e\` n\`p\` a\`B\` (T(e)) = Q (N, Teff, L)  where Q is the ionization rate*
+				- *1057.47*
+				- *834.78*
+				- *637c93e5b120690c*
 				-   Cooling
+					- *841.97*
+					- *758.90*
+					- *825b718776940353*
 		-  Massive Stars
+			- *947.52*
+			- *457.52*
+			- *c675a49d60aeb981*
 
 			--> (*Relation Text: (Massive Stars) emit large amounts of*) -->
 			-  UV Ionization
+				- *1127.09*
+				- *569.83*
+				- *9915e6be3e044d60*
 				-  Ionization Bounded
+					- *1275.36*
+					- *405.65*
+					- *568c7e398149ff47*
 				-  Matter Bounded
+					- *1296.02*
+					- *554.88*
+					- *9509c0dfe6e2bdef*
 	-  Spectral Analysis
 		- [https://iopscience.iop.org/article/10.1088/1538-3873/aa72c3/pdf](https://iopscience.iop.org/article/10.1088/1538-3873/aa72c3/pdf)
+		- *258.58*
+		- *574.08*
+		- *273023ecee24c5cb*
 		-  Hydrogen (Balmer & Lyman)
+			- *73.74*
+			- *689.37*
+			- *91ed37dc29e19854*
 		-  Helium
+			- *243.84*
+			- *739.48*
+			- *ea06df77619726fb*
 		-  Oxygen (OI, OII, OIII)
 			- *A good example of a collisional excitation line coolant is the OIII 4959, 5007 doublet, emitted by doubly ionized oxygen - a main coolant of HII regions. These emissions give the greenish hue to HII regions like the Orion Nebula.*
+			- *449.51*
+			- *775.96*
+			- *de9cf8af7ea580f2*
 		-  Nitrogen (NII)
+			- *561.32*
+			- *667.94*
+			- *ee0c8a38c681c681*
 
 
 - Relations:

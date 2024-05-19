@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 import os
 import zipfile
+import hashlib
 import argparse
 import shutil
+import json
+import random
+import string
 import configparser
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, fields
@@ -38,8 +42,13 @@ class Node:
     link: str = ""
     relationnote: str = ""
     image: str = ""
+    image_pos: str = ""
+    cimages: str = ""
     embedded_image: str = ""
     voice_memo: str = ""
+    x: str = ""
+    y: str = ""
+    guid: str = ""
 
 
 @dataclass
@@ -68,6 +77,79 @@ node_dict = {
  }
 
 media_files = []
+
+
+class CanvasNode:
+  """Represents a node in Canvas"""
+  def __init__(self, type=None, file=None, title=None, text=None, id=None, x=0, y=0, width=0, height=0, color=2):
+    self.type = type
+    self.file = file
+    self.title = title
+    self.text = text
+    self.id = id
+    self.x = x
+    self.y = y
+    self.width = width
+    self.height = height
+    self.color = color
+
+
+class CanvasEdge:
+  """Represents an edge in Canvas"""
+  def __init__(self, id=None, fromNode=None, fromSide=None, toNode=None, toSide=None, label=None):
+    self.id = id
+    self.fromNode = fromNode
+    self.fromSide = fromSide
+    self.toNode = toNode
+    self.toSide = toSide
+    self.label = label
+
+class Canvas:
+  def __init__(self, title):
+    self.nodes = []
+    self.edges = []
+    self.title = title
+    self.base_path = ""  
+
+  def set_base_path(self, base_path):
+    self.base_path = base_path
+
+  def add_node(self, node, type):
+    if not isinstance(node, CanvasNode):
+      raise TypeError("Invalid node type. Must be a Node object.")
+    self.nodes.append(node)
+    # Create file for "file" type nodes
+    if type == ".md" or type ==".png": # and node.file:
+      extension = type 
+      file_path = f"{self.base_path}{node.title}{extension}"
+      node.file = file_path
+      # Create the file
+      with open(file_path, "wb") as f:
+        f.write(node.text)  # Placeholder content
+        print(f"Created file: {file_path}")
+   # elif type == "img":
+
+
+  def add_edge(self, edge):
+    if not isinstance(edge, CanvasEdge):
+      raise TypeError("Invalid edge type. Must be an Edge object.")
+    self.edges.append(edge)
+
+  def object_to_json(self):
+    if not hasattr(self, "nodes") or not hasattr(self, "edges"):
+      raise ValueError("Object must have 'nodes' and 'edges' attributes.")
+
+    # Convert nodes and edges to dictionaries
+    node_dicts = [node.__dict__ for node in self.nodes]
+    edge_dicts = [edge.__dict__ for edge in self.edges]
+
+    # Create the JSON structure
+    json_data = {"nodes": node_dicts, "edges": edge_dicts}
+    return json.dumps(json_data, indent=4)
+  
+
+canvas = Canvas("Null")
+
 
 def unzip_file(zippath, filepath):
     extracted_file = zipfile.ZipFile(zippath)
@@ -172,6 +254,9 @@ def parse_mind_map(infile):
         else:
             topic_node.title = ""
 
+        topic_node.x = topic.get('x')
+        topic_node.y = topic.get('y')
+        topic_node.guid = string_to_hexhash(topic.get('guid'), 16)
         topic_node.parent = topic.get('parent')
         #topic_node.guid = topic.get('guid')
       
@@ -183,6 +268,9 @@ def parse_mind_map(infile):
             topic_node.relationnote += "Relation Text: (" + sm_nodes[int(topic.get('parent'))].title + ") " +  relation.text.replace('\n', ' ')
         for image in topic.findall("images/image"):
             topic_node.image += image.get('name').replace('\n', ' ') + ".png"
+            topic_node.image_pos += image.get('x') + "," + image.get('y') + ";"
+        for cimage in topic.findall("children/image"):
+            topic_node.cimages += cimage.get('name').replace('\n', ' ') + ".png"
         for link in topic.findall("link"):
             if "diagramref" in link.attrib:
                 topic_node.link += link.get('diagramref').replace('\n', ' ')
@@ -284,11 +372,32 @@ def write_output(infile, outfile, numbered, vf):
         f.write(map)
     f.close()
 
+    # Future work
+    #configdict = load_configs()
+    #out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
+    #media_path = configdict["media_path"]
+
+    #for node in sm_nodes:
+    #    canvas.set_base_path(out_path)
+    #    c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
+        #canvas.add_node(c_node, "md")
+        #for field in fields(sm_nodes[int(node.id)]):
+        #    print(field.name)
+
+
+
+def string_to_hexhash(alphanumeric_string, hash_len):
+    hash_object = hashlib.sha3_384(alphanumeric_string.encode('utf-8'))
+    hexdigest = hash_object.hexdigest()
+    #print (hexdigest)
+    start_index = random.randrange(0, len(hexdigest) - hash_len)
+    return hexdigest[start_index:start_index + hash_len]
+
 
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.0.3 **\n")
+    print ("\n** Mindmap Markdown v-0.0.4 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -407,7 +516,7 @@ def main():
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
 
-
+    #print (canvas.object_to_json())
 
 
 if __name__ == "__main__":
