@@ -311,9 +311,13 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
                 a.append("\t"*(level) + "-  " + tree_nodes[int(my_id)].title + "\n") 
 
             for field in fields(tree_nodes[int(my_id)]):
-                if field.name != 'title' and field.name != 'id' and field.name != 'parent' and field.name != 'relationnote':
+                if field.name != 'title' and field.name != 'id' and \
+                    field.name != 'parent' and field.name != 'relationnote' and \
+                    field.name != 'x' and field.name != 'y' and field.name != 'guid' and \
+                    field.name != 'image_pos' and field.name != 'cimages':
                     attr = getattr(tree_nodes[int(my_id)], field.name) 
                     if attr:
+
                         if field.name != 'image' and field.name != 'embedded_image':
                             if field.name != 'link' and field.name != 'voice_memo':
                                 a.append("\t"*(level+1) + "- *" + attr.strip() + "*\n")
