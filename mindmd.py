@@ -412,7 +412,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.0.4 **\n")
+    print ("\n** Mindmap Markdown v-0.0.5 **\n")
        #try:
             #return(self._configdict[key])
 
