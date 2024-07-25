@@ -1,5 +1,6 @@
 launch.json
 save.py
+*.save
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

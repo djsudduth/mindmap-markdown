@@ -5,6 +5,7 @@ import hashlib
 import argparse
 import shutil
 import json
+import uuid
 import random
 import string
 import configparser
@@ -81,17 +82,17 @@ media_files = []
 
 class CanvasNode:
   """Represents a node in Canvas"""
-  def __init__(self, type=None, file=None, title=None, text=None, id=None, x=0, y=0, width=0, height=0, color=2):
+  def __init__(self, type=None, file=None, title=None, text=None, id=None, x=0, y=0, width=0, height=0):
     self.type = type
     self.file = file
     self.title = title
     self.text = text
     self.id = id
-    self.x = x
-    self.y = y
+    self.x = x 
+    self.y = y 
     self.width = width
     self.height = height
-    self.color = color
+
 
 
 class CanvasEdge:
@@ -194,7 +195,8 @@ def check_file_path(filepath):
         pathname = os.path.join(pathname, '').replace("\\","/")
         if os.path.exists(pathname):
             foundpath = True
-            a = os.path.isfile(filepath)
+            if pathname == '':
+                pathname = "./"
             if seemslikefile and os.path.isfile(filepath):
                 foundfile = True
 
@@ -256,7 +258,10 @@ def parse_mind_map(infile):
 
         topic_node.x = topic.get('x')
         topic_node.y = topic.get('y')
-        topic_node.guid = string_to_hexhash(topic.get('guid'), 16)
+        g = topic.get('guid')
+        if not g:
+            g = uuid.uuid4().hex
+        topic_node.guid = string_to_hexhash(g, 16)
         topic_node.parent = topic.get('parent')
         #topic_node.guid = topic.get('guid')
       
@@ -310,11 +315,17 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
             else:
                 a.append("\t"*(level) + "-  " + tree_nodes[int(my_id)].title + "\n") 
 
+            field_set = {"title", "id", "parent", "relationnote",
+                         "x", "y", "guid", "image_pos", "cimages"}
+
             for field in fields(tree_nodes[int(my_id)]):
-                if field.name != 'title' and field.name != 'id' and \
-                    field.name != 'parent' and field.name != 'relationnote' and \
-                    field.name != 'x' and field.name != 'y' and field.name != 'guid' and \
-                    field.name != 'image_pos' and field.name != 'cimages':
+                valid_fields = True
+                for f in field_set:
+                    if field.name == f:
+                        valid_fields = False
+                        break
+
+                if valid_fields:
                     attr = getattr(tree_nodes[int(my_id)], field.name) 
                     if attr:
 
@@ -377,16 +388,16 @@ def write_output(infile, outfile, numbered, vf):
     f.close()
 
     # Future work
-    #configdict = load_configs()
-    #out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
-    #media_path = configdict["media_path"]
+    # configdict = load_configs()
+    # out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
+    # media_path = configdict["media_path"]
 
-    #for node in sm_nodes:
+    # for node in sm_nodes:
     #    canvas.set_base_path(out_path)
-    #    c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
-        #canvas.add_node(c_node, "md")
-        #for field in fields(sm_nodes[int(node.id)]):
-        #    print(field.name)
+    #    c_node = CanvasNode(type="file", file=node.title + ".md", title=node.title, text=node.note + " - " + node.outernote, id=node.guid, x=int(eval(node.x)) * 3, y=int(eval(node.y)) * 3, width=400, height=400)
+    #    canvas.add_node(c_node, "md")
+        ##for field in fields(sm_nodes[int(node.id)]):
+        ##    print(field.name)
 
 
 
@@ -421,7 +432,6 @@ def main():
                     help="Flag for numbered nodes")
     args = parser.parse_args()
 
-
     in_name = args.infile
     out_name = args.outfile
     batch_dir = args.directory
@@ -430,7 +440,6 @@ def main():
 
     if numbered:
         nums = True
-
 
     if in_name != None:
         in_path = in_name
@@ -520,7 +529,7 @@ def main():
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
 
-    #print (canvas.object_to_json())
+    # print (canvas.object_to_json())
 
 
 if __name__ == "__main__":
