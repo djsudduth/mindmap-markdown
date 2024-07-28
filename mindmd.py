@@ -312,7 +312,7 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
             if numbered:
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
-                a.append("\t"*(level) + "-  " + tree_nodes[int(my_id)].title + "\n") 
+                a.append("\t"*(level) + "- " + tree_nodes[int(my_id)].title + "\n") 
 
             for field in fields(tree_nodes[int(my_id)]):
                 if field.name != 'title' and field.name != 'id' and \
