@@ -10,7 +10,7 @@ Here is the default example Simplemind mindmap screenshot that is located in the
 
 ![](mindmaps/HII%20Regions%20Example.png)
 
-The example converted markdown file is found in the **markdown** folder where the first few lines of the markdown output outline has a format like:
+The [example converted markdown](https://github.com/djsudduth/mindmap-markdown/blob/main/markdown/HII%20Regions.md) file is found in the **markdown** folder where the first few lines of the markdown output outline has a format like:
 
 - Nebulae Emissions
 	- Types
