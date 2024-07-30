@@ -1,38 +1,39 @@
--  Nebulae Emissions
-	-  Types
-		-  Planetary Nebulae
+- Nebulae Emissions
+	- Types
+		- Planetary Nebulae
 			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
-		-  HII Regions
-			-  Orion Nebula
-				- *The radius of the Orion Nebula is a few parsecs*
-				- *Outer Note: Energetic ultraviolet starlight (most of which comes from the hot \_class O6\_ star\_ Theta-1 Orionis C\_) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of \_emission lines\_. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.*
+		- ~~<u>***HII Regions***</u>~~
+			- Orion Nebula
+				- The radius of the Orion Nebula is a few parsecs
+				- *Outer Note*: Energetic ultraviolet starlight (most of which comes from the hot <u>class O6</u> star<u> Theta-1 Orionis C</u>) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of <u>emission lines</u>. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.
 				- ![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
-			-  Dorados in the LMC
-				- *Giant region on the order of 100 parsecs*
+			- Dorados in the LMC
+				- Giant region on the order of 100 parsecs
 				- ![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
-		-  Wolf-Rayet Shells
+		- Wolf-Rayet Shells
 			- ![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
-		-  AGNs
-	-  Basic Physics
-		-  Stromgren Sphere
-			-  Emission rate vs recombination rate
-				- *4/3 pi R\^3\^ e n\`e\` n\`p\` a\`B\` (T(e)) = Q (N, Teff, L)  where Q is the ionization rate*
-				-   Cooling
-		-  Massive Stars
+			- ![](media/6f1abb1016cf5dab02e67246235e50b5fd89850d.png)
+		- AGNs
+	- Basic Physics
+		- Stromgren Sphere
+			- Emission rate vs recombination rate
+				- 4/3 pi R<sup>3</sup> e n<sub>e</sub> n<sub>p</sub> a<sub>B</sub> (T(e)) = Q (N, Teff, L)  where Q is the ionization rate
+				-  Cooling
+		- <u>Massive Stars</u>
 
-			--> (*Relation Text: (Massive Stars) emit large amounts of*) -->
-			-  UV Ionization
-				-  Ionization Bounded
-				-  Matter Bounded
-	-  Spectral Analysis
+			--> (*Relation Text*: (<u>Massive Stars</u>) emit large amounts of) -->
+			- UV Ionization
+				- Ionization Bounded
+				- Matter Bounded
+	- Spectral Analysis
 		- [https://iopscience.iop.org/article/10.1088/1538-3873/aa72c3/pdf](https://iopscience.iop.org/article/10.1088/1538-3873/aa72c3/pdf)
-		-  Hydrogen (Balmer & Lyman)
-		-  Helium
-		-  Oxygen (OI, OII, OIII)
-			- *A good example of a collisional excitation line coolant is the OIII 4959, 5007 doublet, emitted by doubly ionized oxygen - a main coolant of HII regions. These emissions give the greenish hue to HII regions like the Orion Nebula.*
-		-  Nitrogen (NII)
+		- Hydrogen (Balmer & Lyman)
+		- Helium
+		- Oxygen (OI, OII, OIII)
+			- A good example of a collisional excitation line coolant is the OIII 4959, 5007 doublet, emitted by doubly ionized oxygen - a main coolant of HII regions. These emissions give the greenish hue to HII regions like the Orion Nebula.
+		- *Nitrogen (NII)*
 
 
 - Relations:
-	- (13) UV Ionization-> *causes* -> (9) Stromgren Sphere
-	- (11)  Cooling-> *caused by molecular examples* -> (19) Oxygen (OI, OII, OIII)
+	- (13) UV Ionization-> causes -> (9) Stromgren Sphere
+	- (11)  Cooling-> *caused by **molecular examples*** -> (19) Oxygen (OI, OII, OIII)

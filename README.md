@@ -5,10 +5,16 @@ Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind ma
 
 One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
 
+## Example
+Here is the defulat example Simplemind mindmap screenshot that is located in the mindmaps folder
+![](mindmaps/HII%20Regions%20Example.png)
+
+The example converted markdown file is found in the `markdown` folder. Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags.
+
 ## Usage
 To run mindmd you can either set your input and output paths in `settings.cfg` file, or, use the input `-i` or output `-o` switches to override the config file.
 
-There are default paths already set in the `settings.cfg` file. However, you can simply test the script by running:
+There are default paths already set in the `settings.cfg` file. However, you can simply test the script against the sample .smmx file by running:
 ```bash
 > python mindmd.py 
 ```

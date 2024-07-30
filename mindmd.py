@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import re
 import zipfile
 import hashlib
 import argparse
@@ -222,7 +223,26 @@ def load_configs():
             config.get(DEFAULT_SECTION, option)
     return configdict
 
-    
+# Replace simplemind rtf formatting syntax with markdown and html
+def replace_html_endtag(text):
+  html = ["<u>", "<sup>", "<sub>"]
+  for html_pre in html:
+    html_post = re.sub("<", "</", html_pre)
+    count = 1
+    def replace_func(match):
+      nonlocal count
+      count += 1
+      return html_post if count % 2 != 0 else html_pre
+    text=re.sub(html_pre, replace_func, text)
+  return(text)
+
+def replace_with_markdown(text):
+    std_md = re.sub(r"\\\\", r"\\", text)
+    std_md =  re.sub(r"\\~", "~~", re.sub(r"\\\*", "**", re.sub(r"\\/", "*", std_md)))
+    return (replace_html_endtag(
+        re.sub(r"\\_", "<u>", re.sub(r"\\\^", "<sup>", re.sub(r"\\`", "<sub>", std_md)))))
+
+
 
 def parse_mind_map(infile):
  
@@ -249,7 +269,7 @@ def parse_mind_map(infile):
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
-        topic_node.title = topic.get('text')
+        topic_node.title = replace_with_markdown(topic.get('text'))
         if topic_node.title is not None:
             topic_node.title = topic_node.title.replace('\\N',' ')
         else:
@@ -265,11 +285,11 @@ def parse_mind_map(infile):
         #topic_node.guid = topic.get('guid')
       
         for note in topic.findall("note"):
-            topic_node.note +=  note.text.strip().replace('\n',' ') 
+            topic_node.note += replace_with_markdown(note.text.strip().replace('\n',' '))
         for child in topic.findall("children/text/note"):
-            topic_node.outernote += "Outer Note: " + (child.text and child.text.replace('\n',' ') or "None") 
+            topic_node.outernote += "*Outer Note*: " + replace_with_markdown((child.text and child.text.replace('\n',' ') or "None")) 
         for relation in topic.findall("parent-relation/children/text/note"):
-            topic_node.relationnote += "Relation Text: (" + sm_nodes[int(topic.get('parent'))].title + ") " +  relation.text.replace('\n', ' ')
+            topic_node.relationnote += "*Relation Text*: (" + sm_nodes[int(topic.get('parent'))].title + ") " +  replace_with_markdown(relation.text.replace('\n', ' '))
         for image in topic.findall("images/image"):
             topic_node.image += image.get('name').replace('\n', ' ') + ".png"
             topic_node.image_pos += image.get('x') + "," + image.get('y') + ";"
@@ -306,13 +326,14 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
 
             #Outer notes only first
             if len(relnote) > 0:
-                if relnote.strip().startswith("Relation Text"):
-                    a.append("\n" + "\t"*(level) + "--> (*" + relnote + "*) -->\n")
+                if relnote.strip().startswith("*Relation Text*"):
+                    a.append("\n" + "\t"*(level) + "--> (" + relnote + ") -->\n")
+                    #a.append("\n" + "\t"*(level) + "--> (*" + relnote + "*) -->\n")
 
             if numbered:
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
-                a.append("\t"*(level) + "-  " + tree_nodes[int(my_id)].title + "\n") 
+                a.append("\t"*(level) + "- " + tree_nodes[int(my_id)].title + "\n") 
 
             for field in fields(tree_nodes[int(my_id)]):
                 if field.name != 'title' and field.name != 'id' and \
@@ -324,7 +345,8 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
 
                         if field.name != 'image' and field.name != 'embedded_image':
                             if field.name != 'link' and field.name != 'voice_memo':
-                                a.append("\t"*(level+1) + "- *" + attr.strip() + "*\n")
+                                a.append("\t"*(level+1) + "- " + attr.strip() + "\n")
+                                #a.append("\t"*(level+1) + "- *" + attr.strip() + "*\n")
                             else:
                                 a.append("\t"*(level+1) + "- [" + attr + "](" + attr.strip() + ")\n")                           
                         else:
@@ -355,7 +377,8 @@ def format_relations(sm_nodes, infile):
     for relation in relations:
         full_relation = "- (" + relation.get('source') + ") " + sm_nodes[int(relation.get('source'))].title
         for note in relation.findall("children/text/note"):
-            full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
+            full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
+            #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
     return output_list
@@ -397,7 +420,6 @@ def write_output(infile, outfile, numbered, vf):
 def string_to_hexhash(alphanumeric_string, hash_len):
     hash_object = hashlib.sha3_384(alphanumeric_string.encode('utf-8'))
     hexdigest = hash_object.hexdigest()
-    #print (hexdigest)
     start_index = random.randrange(0, len(hexdigest) - hash_len)
     return hexdigest[start_index:start_index + hash_len]
 
@@ -405,7 +427,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.0.5 **\n")
+    print ("\n** Mindmap Markdown v-0.0.6 **\n")
        #try:
             #return(self._configdict[key])
 
