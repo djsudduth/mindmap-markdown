@@ -15,10 +15,11 @@ The example converted markdown file is found in the **markdown** folder where th
 - Nebulae Emissions
 	- Types
 		- Planetary Nebulae
-			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+			- (image here)
 		- ~~<u>***HII Regions***</u>~~
 			- Orion Nebula
 				- The radius of the Orion Nebula is a few parsecs
+                - .....
 
 
 Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags. 
