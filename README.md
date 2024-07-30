@@ -6,10 +6,22 @@ Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind ma
 One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
 
 ## Example
-Here is the defulat example Simplemind mindmap screenshot that is located in the mindmaps folder
+Here is the default example Simplemind mindmap screenshot that is located in the **mindmaps** folder:
+
 ![](mindmaps/HII%20Regions%20Example.png)
 
-The example converted markdown file is found in the `markdown` folder. Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags.
+The example converted markdown file is found in the **markdown** folder where the first few lines have a format like:
+
+- Nebulae Emissions
+	- Types
+		- Planetary Nebulae
+			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+		- ~~<u>***HII Regions***</u>~~
+			- Orion Nebula
+				- The radius of the Orion Nebula is a few parsecs
+
+
+Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags. 
 
 ## Usage
 To run mindmd you can either set your input and output paths in `settings.cfg` file, or, use the input `-i` or output `-o` switches to override the config file.
