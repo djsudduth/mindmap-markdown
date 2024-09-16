@@ -404,14 +404,14 @@ def write_output(infile, outfile, numbered, vf):
     f.close()
 
     # Future work
-    #configdict = load_configs()
-    #out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
-    #media_path = configdict["media_path"]
+    configdict = load_configs()
+    out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
+    media_path = configdict["media_path"]
 
-    #for node in sm_nodes:
-    #    canvas.set_base_path(out_path)
-    #    c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
-        #canvas.add_node(c_node, "md")
+    for node in sm_nodes:
+        canvas.set_base_path(out_path)
+        c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
+        canvas.add_node(c_node, "md")
         #for field in fields(sm_nodes[int(node.id)]):
         #    print(field.name)
 
