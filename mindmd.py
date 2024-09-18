@@ -123,11 +123,13 @@ class Canvas:
     # Create file for "file" type nodes
     if type == ".md" or type ==".png": # and node.file:
       extension = type 
-      file_path = f"{self.base_path}{node.title}{extension}"
+      pattern = r"[^a-zA-Z0-9\s]"
+      note_file = re.sub(pattern, '', node.title)
+      file_path = f"{self.base_path}{note_file}{extension}"
       node.file = file_path
       # Create the file
       with open(file_path, "wb") as f:
-        f.write(node.text)  # Placeholder content
+        f.write(node.text.encode())  # Placeholder content
         print(f"Created file: {file_path}")
    # elif type == "img":
 
@@ -411,7 +413,7 @@ def write_output(infile, outfile, numbered, vf):
     for node in sm_nodes:
         canvas.set_base_path(out_path)
         c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
-        canvas.add_node(c_node, "md")
+        canvas.add_node(c_node, ".md")
         #for field in fields(sm_nodes[int(node.id)]):
         #    print(field.name)
 
@@ -546,7 +548,7 @@ def main():
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
 
-    #print (canvas.object_to_json())
+    print (canvas.object_to_json())
 
 
 if __name__ == "__main__":
