@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
+import math
 import zipfile
 import hashlib
 import argparse
@@ -150,6 +151,46 @@ class Canvas:
     # Create the JSON structure
     json_data = {"nodes": node_dicts, "edges": edge_dicts}
     return json.dumps(json_data, indent=4)
+  
+
+def determine_relative_position(node1: CanvasNode, node2: CanvasNode) -> str:
+    # Calculate the bounding box of each rectangle
+    rect1_left = float(node1.x)
+    rect1_top = float(node1.y)
+    rect1_right = rect1_left + float(node1.width)
+    rect1_bottom = rect1_top - float(node1.height)
+
+    rect2_left = float(node2.x)
+    rect2_top = float(node2.y)
+    rect2_right = rect2_left + float(node2.width)
+    rect2_bottom =  rect2_top - float(node2.height)
+
+      # Check if rectangles overlap
+    if rect1_left < rect2_right and rect2_left < rect1_right and rect1_top > rect2_bottom and rect2_top > rect1_bottom:
+        return "overlapping"
+
+    # Calculate the angle between the centers of the rectangles
+    center1_x = (rect1_left + rect1_right) / 2
+    center1_y = (rect1_top + rect1_bottom) / 2
+    center2_x = (rect2_left + rect2_right) / 2
+    center2_y = (rect2_top + rect2_bottom) / 2
+    angle = math.degrees(math.atan2(center2_y - center1_y, center2_x - center1_x))
+
+    # Adjust the angle to be in the range 0 to 360
+    if angle < 0:
+        angle += 360
+
+    # Determine the relative position based on the angle
+    if 315 <= angle <= 45:
+        return "top, bottom"
+    elif 45 < angle <= 135:
+        return "right, left"
+    elif 135 < angle <= 225:
+        return "down, top"
+    else:
+        return "left, right"
+
+    
   
 
 canvas = Canvas("Null")
@@ -314,7 +355,7 @@ def parse_mind_map(infile):
 
 
 
-def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf):
+def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile, vf):
 
     configdict = load_configs()
     in_path = os.path.join(os.path.split(infile)[0], '').replace("\\","/") #configdict["input_path"]
@@ -336,6 +377,7 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
                 a.append("\t"*(level) + "- " + tree_nodes[int(my_id)].title + "\n") 
+            e.append(str(node.guid) + "," + str(level))
 
             for field in fields(tree_nodes[int(my_id)]):
                 if field.name != 'title' and field.name != 'id' and \
@@ -364,7 +406,7 @@ def format_map(parent_value, tree_nodes, a, level, numbered, infile, outfile, vf
                                     continue
 
             
-            format_map (my_id, tree_nodes, a, level + 1, numbered, in_path, out_path, vf)
+            format_map (my_id, tree_nodes, a, e, level + 1, numbered, in_path, out_path, vf)
     return a    
 
 
@@ -393,7 +435,8 @@ def write_output(infile, outfile, numbered, vf):
     #output
     f = open(outfile,"w", encoding='utf8')
     a = []
-    outline = format_map("-1", sm_nodes, a, 0, numbered, infile, outfile, vf)
+    e = []
+    outline = format_map("-1", sm_nodes, a, e, 0, numbered, infile, outfile, vf)
     for map in outline:
         f.write(map)
         #media
@@ -410,10 +453,24 @@ def write_output(infile, outfile, numbered, vf):
     out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
     media_path = configdict["media_path"]
 
+
     for node in sm_nodes:
         canvas.set_base_path(out_path)
         c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
         canvas.add_node(c_node, ".md")
+
+    p = determine_relative_position(canvas.nodes[0], canvas.nodes[1])
+
+    for i, edge in enumerate(e):
+        vals = edge.split(",")
+        if i == 0:
+            top = vals[0]
+        else:
+
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), top, None, vals[0], None, "test")
+            canvas.add_edge(c_edge)
+        if i > 1:
+            break
         #for field in fields(sm_nodes[int(node.id)]):
         #    print(field.name)
 
