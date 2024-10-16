@@ -60,6 +60,13 @@ To add line numbers to each node in the markdown output use:
 > python mindmd.py -n
 ```
 
+#### Obsidian Canvas
+To output the mindmap to an Obsidian canvas vs. a single markdown file, use the `-c` switch along with the input and output flags if needed:
+```bash
+> python mindmd.py -c
+```
+This will create individual markdown files for every mindmap node vs a single output file. Plus, the canvas file will be output. If your mindmap is large you will have many markdown files!  
+
 Note that the media path is relative to the output path in `settings.cfg`
 
 ###  Markdown
