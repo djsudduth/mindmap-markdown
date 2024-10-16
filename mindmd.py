@@ -90,11 +90,11 @@ class CanvasNode:
     self.title = title
     self.text = text
     self.id = id
-    self.x = x
-    self.y = y
+    self.x = int((x - 500) * 2)
+    self.y = int((y - 500) * 2)
     self.width = width
     self.height = height
-    self.color = color
+    #self.color = color
 
 
 class CanvasEdge:
@@ -113,25 +113,28 @@ class Canvas:
     self.edges = []
     self.title = title
     self.base_path = ""  
+    self.canvas_path = ""
 
   def set_base_path(self, base_path):
     self.base_path = base_path
 
-  def add_node(self, node, type):
+  def add_node(self, node, type, text):
     if not isinstance(node, CanvasNode):
       raise TypeError("Invalid node type. Must be a Node object.")
     self.nodes.append(node)
     # Create file for "file" type nodes
     if type == ".md" or type ==".png": # and node.file:
-      extension = type 
-      pattern = r"[^a-zA-Z0-9\s]"
-      note_file = re.sub(pattern, '', node.title)
-      file_path = f"{self.base_path}{note_file}{extension}"
-      node.file = file_path
-      # Create the file
-      with open(file_path, "wb") as f:
-        f.write(node.text.encode())  # Placeholder content
-        print(f"Created file: {file_path}")
+        extension = type 
+        pattern = r"[^a-zA-Z0-9\s]"
+        note_file = re.sub(pattern, '', node.title)
+        file_path = f"{self.base_path}{note_file}{extension}"
+        node.file = file_path
+        if type == ".md":
+            # Create the file
+            with open(file_path, "wb") as f:
+                f.write(text.encode())  # Placeholder content
+            print(f"Created file: {file_path}")
+            
    # elif type == "img":
 
 
@@ -174,21 +177,24 @@ def determine_relative_position(node1: CanvasNode, node2: CanvasNode) -> str:
     center1_y = (rect1_top + rect1_bottom) / 2
     center2_x = (rect2_left + rect2_right) / 2
     center2_y = (rect2_top + rect2_bottom) / 2
-    angle = math.degrees(math.atan2(center2_y - center1_y, center2_x - center1_x))
+    # Inverted axis ??
+    angle = math.degrees(math.atan2(-(center2_y - center1_y), center2_x - center1_x)) - 90
 
     # Adjust the angle to be in the range 0 to 360
     if angle < 0:
         angle += 360
 
     # Determine the relative position based on the angle
-    if 315 <= angle <= 45:
-        return "top, bottom"
+    if 0 <= angle <= 45:
+        return "top,bottom"
     elif 45 < angle <= 135:
-        return "right, left"
+        return "left,right"
     elif 135 < angle <= 225:
-        return "down, top"
+        return "bottom,top"
+    elif 315 < angle <= 359:
+        return "top,bottom"
     else:
-        return "left, right"
+        return "right,left"
 
     
   
@@ -377,7 +383,7 @@ def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile,
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
                 a.append("\t"*(level) + "- " + tree_nodes[int(my_id)].title + "\n") 
-            e.append(str(node.guid) + "," + str(level))
+            e.append(str(node.parent) + "," + str(node.guid) + "," + str(level))
 
             for field in fields(tree_nodes[int(my_id)]):
                 if field.name != 'title' and field.name != 'id' and \
@@ -398,6 +404,7 @@ def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile,
                             mfiles = [(attr[i:i+n]) for i in range(0, len(attr), n)]
                             for mfile in mfiles:
                                 a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
+                                #e.append(str(node.parent) + "," + str(media_path + mfile) + "," + "i")
                                 #media
                                 try:
                                     shutil.copy2("images/" + mfile, out_path + media_path + mfile)
@@ -428,7 +435,7 @@ def format_relations(sm_nodes, infile):
     return output_list
 
 
-def write_output(infile, outfile, numbered, vf):
+def write_output(infile, outfile, numbered, vf, ocanvas):
     # load smmx xml content
     sm_nodes = parse_mind_map(infile)
 
@@ -448,31 +455,60 @@ def write_output(infile, outfile, numbered, vf):
         f.write(map)
     f.close()
 
-    # Future work
-    configdict = load_configs()
-    out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
-    media_path = configdict["media_path"]
+    ocanvas = True
+    if ocanvas:
+        # Future work
+        configdict = load_configs()
+        out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
+        media_path = configdict["media_path"]
+        #canvas_path = configdict["canvas_path"]
 
 
-    for node in sm_nodes:
-        canvas.set_base_path(out_path)
-        c_node = CanvasNode(type="file", file = None, title=node.title, text=node.note + "\n" + node.outernote, id=node.guid, x=node.x, y=node.y, width=450, height=140)
-        canvas.add_node(c_node, ".md")
+        for node in sm_nodes:
+            canvas.set_base_path(out_path)
+            c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+            note_text = node.note + "\n" + node.outernote
+            if len(node.embedded_image) > 0:
+                note_text = "![](" + media_path + node.embedded_image + ")\n" + note_text
+            canvas.add_node(c_node, ".md", note_text)
+            #move this
+            #if len(node.image) > 0:
+            #    icoord = node.image_pos.rstrip(';').split(",")
+            #    c_node = CanvasNode(type="file", file = None, title=node.image, text="", id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) + float(icoord[0]), y=float(node.y) + float(icoord[1]), width=300.00, height=140.00)
+            #    canvas.add_node(c_node, ".png")
 
-    p = determine_relative_position(canvas.nodes[0], canvas.nodes[1])
 
-    for i, edge in enumerate(e):
-        vals = edge.split(",")
-        if i == 0:
-            top = vals[0]
-        else:
+        for parent, edge in enumerate(e):
+            pvals = edge.split(",")
+            for j, children in enumerate(e):
+                vals = children.split(",")
+                if int(vals[0]) == parent:
+                    p = determine_relative_position(canvas.nodes[parent], canvas.nodes[j])
+                    from_to = p.split(",")
+                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], sm_nodes[j].relationnote)
+                    canvas.add_edge(c_edge)
 
-            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), top, None, vals[0], None, "test")
-            canvas.add_edge(c_edge)
-        if i > 1:
-            break
-        #for field in fields(sm_nodes[int(node.id)]):
-        #    print(field.name)
+        imagelist = []
+        coordinates = []
+        for node in sm_nodes:
+            canvas.set_base_path(out_path)
+            if len(node.image) > 0:
+                image_names = re.findall(r"(.{44})", node.image)
+                for im in image_names:
+                    imagelist.append(im)
+                # Extract coordinate pairs
+                coordinate_pairs = node.image_pos.split(";")
+                for pair in coordinate_pairs:
+                    if len(pair) > 0:
+                        pair = str(pair)
+                        top, left = pair.split(",")
+                        coordinates.append((node.id, top, left))
+        ex_images = list(zip(imagelist, coordinates))
+        for images in ex_images:
+            a = images[1][0]
+            c_node = CanvasNode(type="file", file = None, title=images[0], text="", 
+                    id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
+            canvas.add_node(c_node, ".png", "")
 
 
 
@@ -485,6 +521,11 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 
 def main():
+
+    a = '-116.60,-26.48'
+    b, c = map(float, a.split(","))
+    print (b, c)
+    #exit()
 
     print ("\n** Mindmap Markdown v-0.0.7 **\n")
        #try:
@@ -504,6 +545,7 @@ def main():
                     help="Flag for batch processing")
     parser.add_argument("--numbered", "-n", default=False, action="store_true",
                     help="Flag for numbered nodes")
+    parser.add_argument("--canvas", "-c", type=str, required=False)
     args = parser.parse_args()
 
 
@@ -511,6 +553,7 @@ def main():
     out_name = args.outfile
     batch_dir = args.directory
     numbered = args.numbered
+    ocanvas = args.canvas
     nums = False
 
     if numbered:
@@ -563,7 +606,7 @@ def main():
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
         unzip_file(infile, '.')
-        write_output(DEFAULT_MINDMAP, outfile, nums, vs)
+        write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
 
     else:
         if in_name != None:
@@ -594,7 +637,7 @@ def main():
                         continue
                     outfile = ext[0] + ".md"
                     print ("Mindmap: " + f + " ----> Markdown: " + batch_dir + outfile)
-                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs)
+                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs, ocanvas)
 
     if not os.path.exists(vs.out_full_media_path):
         os.makedirs(vs.out_full_media_path)
