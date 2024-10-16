@@ -1,0 +1,441 @@
+{
+    "nodes": [
+        {
+            "type": "file",
+            "file": "markdown/Nebulae Emissions.md",
+            "title": "Nebulae Emissions",
+            "text": "",
+            "id": "22b69419f79c7b89",
+            "x": 0,
+            "y": 0,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Types.md",
+            "title": "Types",
+            "text": "",
+            "id": "3ebe2702ed3aa26b",
+            "x": -119,
+            "y": -391,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Planetary Nebulae.md",
+            "title": "Planetary Nebulae",
+            "text": "",
+            "id": "b7f98b46153bd457",
+            "x": -388,
+            "y": -658,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/uHII Regionsu.md",
+            "title": "~~<u>***HII Regions***</u>~~",
+            "text": "",
+            "id": "beea1d21b2ecde2a",
+            "x": 184,
+            "y": -683,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Orion Nebula.md",
+            "title": "Orion Nebula",
+            "text": "",
+            "id": "f7e939a3bcadb080",
+            "x": -41,
+            "y": -1167,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Dorados in the LMC.md",
+            "title": "Dorados in the LMC",
+            "text": "",
+            "id": "f3af8a4179d9f5b4",
+            "x": 761,
+            "y": -818,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/WolfRayet Shells.md",
+            "title": "Wolf-Rayet Shells",
+            "text": "",
+            "id": "c1c30ed1dd290103",
+            "x": 358,
+            "y": -416,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/AGNs.md",
+            "title": "AGNs",
+            "text": "",
+            "id": "4f6ecfc741ef04c7",
+            "x": 332,
+            "y": -222,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Basic Physics.md",
+            "title": "Basic Physics",
+            "text": "",
+            "id": "f2862fc169f9c399",
+            "x": 623,
+            "y": 94,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Stromgren Sphere.md",
+            "title": "Stromgren Sphere",
+            "text": "",
+            "id": "93cc7d71dba539c9",
+            "x": 1188,
+            "y": 429,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Emission rate vs recombination rate.md",
+            "title": "Emission rate vs recombination rate",
+            "text": "",
+            "id": "bf9a73050637c93e",
+            "x": 1114,
+            "y": 669,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/ Cooling.md",
+            "title": " Cooling",
+            "text": "",
+            "id": "9403531ff2cc1ec9",
+            "x": 730,
+            "y": 490,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/uMassive Starsu.md",
+            "title": "<u>Massive Stars</u>",
+            "text": "",
+            "id": "5cbf518a82074c55",
+            "x": 895,
+            "y": -84,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/UV Ionization.md",
+            "title": "UV Ionization",
+            "text": "",
+            "id": "9915e6be3e044d60",
+            "x": 1254,
+            "y": 139,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Ionization Bounded.md",
+            "title": "Ionization Bounded",
+            "text": "",
+            "id": "26850528c77974a1",
+            "x": 1550,
+            "y": -188,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Matter Bounded.md",
+            "title": "Matter Bounded",
+            "text": "",
+            "id": "77c5df62a915afaf",
+            "x": 1592,
+            "y": 109,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Spectral Analysis.md",
+            "title": "Spectral Analysis",
+            "text": "",
+            "id": "cee24c5cb0dc4898",
+            "x": -482,
+            "y": 148,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Hydrogen Balmer  Lyman.md",
+            "title": "Hydrogen (Balmer & Lyman)",
+            "text": "",
+            "id": "657355d0c8d37a3a",
+            "x": -852,
+            "y": 378,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Helium.md",
+            "title": "Helium",
+            "text": "",
+            "id": "9c25bda08cff62cf",
+            "x": -512,
+            "y": 478,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Oxygen OI OII OIII.md",
+            "title": "Oxygen (OI, OII, OIII)",
+            "text": "",
+            "id": "e2bc71f96a8722a0",
+            "x": -100,
+            "y": 551,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/Nitrogen NII.md",
+            "title": "*Nitrogen (NII)*",
+            "text": "",
+            "id": "235adada2f47eb44",
+            "x": 122,
+            "y": 335,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png",
+            "title": "5d4493207aed3f31bcc366a6a7bee2c5254c0d02",
+            "text": "",
+            "id": "fdb140cc90f03029",
+            "x": -621,
+            "y": -711,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png",
+            "title": "3ba6427a0bcfcfe5bb80836a46e01d50b09b29da",
+            "text": "",
+            "id": "9cbe49c0fae63c6a",
+            "x": 1025,
+            "y": -842,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png",
+            "title": "9b0722981ac97bcc14ef5440d1fd68265447fcab",
+            "text": "",
+            "id": "59460ab1ef419358",
+            "x": 681,
+            "y": -334,
+            "width": 300.0,
+            "height": 140.0
+        },
+        {
+            "type": "file",
+            "file": "markdown/media/6f1abb1016cf5dab02e67246235e50b5fd89850d.png",
+            "title": "6f1abb1016cf5dab02e67246235e50b5fd89850d",
+            "text": "",
+            "id": "4a575003d11d9082",
+            "x": 746,
+            "y": -546,
+            "width": 300.0,
+            "height": 140.0
+        }
+    ],
+    "edges": [
+        {
+            "id": "529ff07302e64626",
+            "fromNode": "22b69419f79c7b89",
+            "fromSide": "top",
+            "toNode": "3ebe2702ed3aa26b",
+            "toSide": "bottom",
+            "label": ""
+        },
+        {
+            "id": "e5d39978d4ab8071",
+            "fromNode": "22b69419f79c7b89",
+            "fromSide": "right",
+            "toNode": "f2862fc169f9c399",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "5a9c57ee6482af69",
+            "fromNode": "22b69419f79c7b89",
+            "fromSide": "left",
+            "toNode": "cee24c5cb0dc4898",
+            "toSide": "right",
+            "label": ""
+        },
+        {
+            "id": "a21603b27586713b",
+            "fromNode": "3ebe2702ed3aa26b",
+            "fromSide": "left",
+            "toNode": "b7f98b46153bd457",
+            "toSide": "right",
+            "label": ""
+        },
+        {
+            "id": "4591e0e7e0aed898",
+            "fromNode": "3ebe2702ed3aa26b",
+            "fromSide": "right",
+            "toNode": "beea1d21b2ecde2a",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "415fe0fcdaf1d470",
+            "fromNode": "3ebe2702ed3aa26b",
+            "fromSide": "right",
+            "toNode": "c1c30ed1dd290103",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "dc426580aadb554d",
+            "fromNode": "3ebe2702ed3aa26b",
+            "fromSide": "right",
+            "toNode": "4f6ecfc741ef04c7",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "54f51a20cf12fbb6",
+            "fromNode": "beea1d21b2ecde2a",
+            "fromSide": "top",
+            "toNode": "f7e939a3bcadb080",
+            "toSide": "bottom",
+            "label": ""
+        },
+        {
+            "id": "fc4bb2dca1db285d",
+            "fromNode": "beea1d21b2ecde2a",
+            "fromSide": "right",
+            "toNode": "f3af8a4179d9f5b4",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "7f5d33c77acac2c2",
+            "fromNode": "f2862fc169f9c399",
+            "fromSide": "right",
+            "toNode": "93cc7d71dba539c9",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "34268bf21e59e0f3",
+            "fromNode": "f2862fc169f9c399",
+            "fromSide": "right",
+            "toNode": "5cbf518a82074c55",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "bc1fa831faadcc3c",
+            "fromNode": "93cc7d71dba539c9",
+            "fromSide": "bottom",
+            "toNode": "bf9a73050637c93e",
+            "toSide": "top",
+            "label": ""
+        },
+        {
+            "id": "4f9e3e699e0fb7fa",
+            "fromNode": "bf9a73050637c93e",
+            "fromSide": "left",
+            "toNode": "9403531ff2cc1ec9",
+            "toSide": "right",
+            "label": ""
+        },
+        {
+            "id": "a164cecafac8f50a",
+            "fromNode": "5cbf518a82074c55",
+            "fromSide": "right",
+            "toNode": "9915e6be3e044d60",
+            "toSide": "left",
+            "label": "(<u>Massive Stars</u>) emit large amounts of"
+        },
+        {
+            "id": "a601fd4eb8e9d896",
+            "fromNode": "9915e6be3e044d60",
+            "fromSide": "top",
+            "toNode": "26850528c77974a1",
+            "toSide": "bottom",
+            "label": ""
+        },
+        {
+            "id": "b819f2f1485ed06f",
+            "fromNode": "9915e6be3e044d60",
+            "fromSide": "right",
+            "toNode": "77c5df62a915afaf",
+            "toSide": "left",
+            "label": ""
+        },
+        {
+            "id": "65be40512db8b695",
+            "fromNode": "cee24c5cb0dc4898",
+            "fromSide": "left",
+            "toNode": "657355d0c8d37a3a",
+            "toSide": "right",
+            "label": ""
+        },
+        {
+            "id": "95505b740b8b9777",
+            "fromNode": "cee24c5cb0dc4898",
+            "fromSide": "bottom",
+            "toNode": "9c25bda08cff62cf",
+            "toSide": "top",
+            "label": ""
+        },
+        {
+            "id": "e485ccfca95ec05e",
+            "fromNode": "cee24c5cb0dc4898",
+            "fromSide": "bottom",
+            "toNode": "e2bc71f96a8722a0",
+            "toSide": "top",
+            "label": ""
+        },
+        {
+            "id": "c358e729a8b4990b",
+            "fromNode": "cee24c5cb0dc4898",
+            "fromSide": "right",
+            "toNode": "235adada2f47eb44",
+            "toSide": "left",
+            "label": ""
+        }
+    ]
+}

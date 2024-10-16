@@ -169,8 +169,8 @@ def determine_relative_position(node1: CanvasNode, node2: CanvasNode) -> str:
     rect2_bottom =  rect2_top - float(node2.height)
 
       # Check if rectangles overlap
-    if rect1_left < rect2_right and rect2_left < rect1_right and rect1_top > rect2_bottom and rect2_top > rect1_bottom:
-        return "overlapping"
+    #if rect1_left < rect2_right and rect2_left < rect1_right and rect1_top > rect2_bottom and rect2_top > rect1_bottom:
+    #    return "overlapping"
 
     # Calculate the angle between the centers of the rectangles
     center1_x = (rect1_left + rect1_right) / 2
@@ -286,10 +286,13 @@ def replace_html_endtag(text):
   return(text)
 
 def replace_with_markdown(text):
-    std_md = re.sub(r"\\\\", r"\\", text)
-    std_md =  re.sub(r"\\~", "~~", re.sub(r"\\\*", "**", re.sub(r"\\/", "*", std_md)))
-    return (replace_html_endtag(
-        re.sub(r"\\_", "<u>", re.sub(r"\\\^", "<sup>", re.sub(r"\\`", "<sub>", std_md)))))
+    if text is not None:
+        std_md = re.sub(r"\\\\", r"\\", text)
+        std_md =  re.sub(r"\\~", "~~", re.sub(r"\\\*", "**", re.sub(r"\\/", "*", std_md)))
+        return (replace_html_endtag(
+            re.sub(r"\\_", "<u>", re.sub(r"\\\^", "<sup>", re.sub(r"\\`", "<sub>", std_md)))))
+    else:
+        return()
 
 
 
@@ -319,7 +322,7 @@ def parse_mind_map(infile):
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
         topic_node.title = replace_with_markdown(topic.get('text'))
-        if topic_node.title is not None:
+        if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')
         else:
             topic_node.title = ""
@@ -455,7 +458,6 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
         f.write(map)
     f.close()
 
-    ocanvas = True
     if ocanvas:
         # Future work
         configdict = load_configs()
@@ -471,12 +473,6 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
             if len(node.embedded_image) > 0:
                 note_text = "![](" + media_path + node.embedded_image + ")\n" + note_text
             canvas.add_node(c_node, ".md", note_text)
-            #move this
-            #if len(node.image) > 0:
-            #    icoord = node.image_pos.rstrip(';').split(",")
-            #    c_node = CanvasNode(type="file", file = None, title=node.image, text="", id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) + float(icoord[0]), y=float(node.y) + float(icoord[1]), width=300.00, height=140.00)
-            #    canvas.add_node(c_node, ".png")
-
 
         for parent, edge in enumerate(e):
             pvals = edge.split(",")
@@ -485,13 +481,16 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                 if int(vals[0]) == parent:
                     p = determine_relative_position(canvas.nodes[parent], canvas.nodes[j])
                     from_to = p.split(",")
-                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], sm_nodes[j].relationnote)
+                    relation = sm_nodes[j].relationnote
+                    if ":" in relation:
+                        relation = relation.split(":")[1].strip()
+                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation)
                     canvas.add_edge(c_edge)
 
         imagelist = []
         coordinates = []
         for node in sm_nodes:
-            canvas.set_base_path(out_path)
+            canvas.set_base_path(out_path + media_path)
             if len(node.image) > 0:
                 image_names = re.findall(r"(.{44})", node.image)
                 for im in image_names:
@@ -505,8 +504,7 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                         coordinates.append((node.id, top, left))
         ex_images = list(zip(imagelist, coordinates))
         for images in ex_images:
-            a = images[1][0]
-            c_node = CanvasNode(type="file", file = None, title=images[0], text="", 
+            c_node = CanvasNode(type="file", file = None, title=images[0].split(".")[0], text="", 
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
             canvas.add_node(c_node, ".png", "")
 
@@ -522,12 +520,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    a = '-116.60,-26.48'
-    b, c = map(float, a.split(","))
-    print (b, c)
-    #exit()
-
-    print ("\n** Mindmap Markdown v-0.0.7 **\n")
+    print ("\n** BETA!!! Mindmap Markdown v-0.0.7 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -545,7 +538,8 @@ def main():
                     help="Flag for batch processing")
     parser.add_argument("--numbered", "-n", default=False, action="store_true",
                     help="Flag for numbered nodes")
-    parser.add_argument("--canvas", "-c", type=str, required=False)
+    parser.add_argument("--canvas", "-c", default=False, action="store_true",
+                    help="Flag for output of Obsidian canvas")
     args = parser.parse_args()
 
 
@@ -554,6 +548,7 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
+    #ocanvas = True
     nums = False
 
     if numbered:
@@ -592,13 +587,6 @@ def main():
         if out_name == None:
             ext = os.path.splitext(vs.in_file)
             outfile = vs.out_path + ext[0] + ".md"
-       
-            #ext = os.path.splitext(test_file)
-            #if out_path == '':
-            #    outfile = in_path + ext[0] + ".md"
-            #else:
-            #    outfile = out_path + ext[0] + ".md"
-
         else:
             if vs.out_path_exists == False or vs.out_seems_filelike == False:
                 print ("Output file path and/or name are invalid\n")
@@ -607,6 +595,12 @@ def main():
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
         unzip_file(infile, '.')
         write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
+        if ocanvas:
+            #print (canvas.object_to_json())
+            cname = outfile.split(".")[0]
+            f = open(cname + ".canvas","w", encoding='utf8')
+            f.write(canvas.object_to_json())
+            print ("\nCreated file: " + cname + ".canvas")
 
     else:
         if in_name != None:
@@ -648,7 +642,6 @@ def main():
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
 
-    print (canvas.object_to_json())
 
 
 if __name__ == "__main__":
