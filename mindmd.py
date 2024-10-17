@@ -325,7 +325,7 @@ def parse_mind_map(infile):
         if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')
         else:
-            topic_node.title = ""
+            topic_node.title = topic.get('guid')
 
         topic_node.x = topic.get('x')
         topic_node.y = topic.get('y')
@@ -469,9 +469,9 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
         for node in sm_nodes:
             canvas.set_base_path(out_path)
             c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
-            note_text = node.note + "\n" + node.outernote
+            note_text = node.note + "\n\n" + node.outernote
             if len(node.embedded_image) > 0:
-                note_text = "![](" + media_path + node.embedded_image + ")\n" + note_text
+                note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
             canvas.add_node(c_node, ".md", note_text)
 
         for parent, edge in enumerate(e):
