@@ -125,7 +125,7 @@ class Canvas:
     # Create file for "file" type nodes
     if type == ".md" or type ==".png": # and node.file:
         extension = type 
-        pattern = r"[^a-zA-Z0-9\s]"
+        pattern = r"[\\/:*?\"<>|]"
         note_file = re.sub(pattern, '', node.title)
         file_path = f"{self.base_path}{note_file}{extension}"
         node.file = file_path
@@ -548,7 +548,7 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
-    #ocanvas = True
+    ocanvas = True
     nums = False
 
     if numbered:
@@ -593,7 +593,7 @@ def main():
                 exit()
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
-        unzip_file(infile, '.')
+        #unzip_file(infile, '.')
         write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
         if ocanvas:
             #print (canvas.object_to_json())
