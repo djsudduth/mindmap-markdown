@@ -9,6 +9,7 @@ import shutil
 import json
 import uuid
 import random
+import time
 import string
 import configparser
 import xml.etree.ElementTree as ET
@@ -25,7 +26,8 @@ default_settings = {
     'input_path': "",
     'output_path': "",
     'media_path': "",
-    'test_file_name': ""
+    'test_file_name': "",
+    'canvas_scale': ""
 }
 
 
@@ -81,6 +83,25 @@ node_dict = {
 
 media_files = []
 
+def load_configs():
+    config = configparser.ConfigParser()
+    configdict = {}
+
+    cfile = config.read(CONFIG_FILE)
+    if not cfile:
+        config[DEFAULT_SECTION] = default_settings
+        try:
+            with open(CONFIG_FILE, 'w') as configfile:
+                config.write(configfile)
+        except Exception as e:
+            raise Exception(e)
+
+    options = config.options(DEFAULT_SECTION)
+    for option in options:
+        configdict[option] = \
+            config.get(DEFAULT_SECTION, option)
+    return configdict
+
 
 class CanvasNode:
   """Represents a node in Canvas"""
@@ -90,8 +111,9 @@ class CanvasNode:
     self.title = title
     self.text = text
     self.id = id
-    self.x = int((x - 500) * 2)
-    self.y = int((y - 500) * 2)
+    self.canvas_scale = float(load_configs()["canvas_scale"])
+    self.x = int((x - 500) * self.canvas_scale)
+    self.y = int((y - 500) * self.canvas_scale)
     self.width = width
     self.height = height
     #self.color = color
@@ -253,24 +275,6 @@ def check_file_path(filepath):
 
 
 
-def load_configs():
-    config = configparser.ConfigParser()
-    configdict = {}
-
-    cfile = config.read(CONFIG_FILE)
-    if not cfile:
-        config[DEFAULT_SECTION] = default_settings
-        try:
-            with open(CONFIG_FILE, 'w') as configfile:
-                config.write(configfile)
-        except Exception as e:
-            raise Exception(e)
-
-    options = config.options(DEFAULT_SECTION)
-    for option in options:
-        configdict[option] = \
-            config.get(DEFAULT_SECTION, option)
-    return configdict
 
 # Replace simplemind rtf formatting syntax with markdown and html
 def replace_html_endtag(text):
@@ -364,7 +368,7 @@ def parse_mind_map(infile):
 
 
 
-def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile, vf):
+def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile, vf):
 
     configdict = load_configs()
     in_path = os.path.join(os.path.split(infile)[0], '').replace("\\","/") #configdict["input_path"]
@@ -386,7 +390,7 @@ def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile,
                 a.append("\t"*(level) + "- (" + str(my_id) + ") " + tree_nodes[int(my_id)].title + "\n") 
             else:
                 a.append("\t"*(level) + "- " + tree_nodes[int(my_id)].title + "\n") 
-            e.append(str(node.parent) + "," + str(node.guid) + "," + str(level))
+            ee.append(str(node.parent) + "," + str(node.guid) + "," + str(level))
 
             for field in fields(tree_nodes[int(my_id)]):
                 if field.name != 'title' and field.name != 'id' and \
@@ -409,14 +413,18 @@ def format_map(parent_value, tree_nodes, a, e, level, numbered, infile, outfile,
                                 a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
                                 #e.append(str(node.parent) + "," + str(media_path + mfile) + "," + "i")
                                 #media
-                                try:
-                                    shutil.copy2("images/" + mfile, out_path + media_path + mfile)
-                                except:
-                                    print ("Image file 'images/" + mfile + "' missing or not accessible!!")
-                                    continue
+                                for attempt in range(1, 2):
+                                    try:
+                                        shutil.copy2("images/" + mfile, out_path + media_path + mfile)
+                                    except Exception as e:
+                                        if attempt == 2:
+                                            print ("Image file 'images/" + mfile + "' missing or not accessible!!")
+                                            continue
+                                        time.sleep(0.25)
+
 
             
-            format_map (my_id, tree_nodes, a, e, level + 1, numbered, in_path, out_path, vf)
+            format_map (my_id, tree_nodes, a, ee, level + 1, numbered, in_path, out_path, vf)
     return a    
 
 
@@ -445,8 +453,8 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
     #output
     f = open(outfile,"w", encoding='utf8')
     a = []
-    e = []
-    outline = format_map("-1", sm_nodes, a, e, 0, numbered, infile, outfile, vf)
+    ee = []
+    outline = format_map("-1", sm_nodes, a, ee, 0, numbered, infile, outfile, vf)
     for map in outline:
         f.write(map)
         #media
@@ -474,16 +482,16 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                 note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
             canvas.add_node(c_node, ".md", note_text)
 
-        for parent, edge in enumerate(e):
+        for parent, edge in enumerate(ee):
             pvals = edge.split(",")
-            for j, children in enumerate(e):
+            for j, children in enumerate(ee):
                 vals = children.split(",")
                 if int(vals[0]) == parent:
                     p = determine_relative_position(canvas.nodes[parent], canvas.nodes[j])
                     from_to = p.split(",")
                     relation = sm_nodes[j].relationnote
                     if ":" in relation:
-                        relation = relation.split(":")[1].strip()
+                        relation = relation.split(":")[1].strip().split(")")[1].strip()
                     c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation)
                     canvas.add_edge(c_edge)
 
@@ -520,7 +528,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** BETA!!! Mindmap Markdown v-0.0.7 **\n")
+    print ("\n** BETA!!! Mindmap Markdown v-0.0.8 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -593,7 +601,7 @@ def main():
                 exit()
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
-        #unzip_file(infile, '.')
+        unzip_file(infile, '.')
         write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
         if ocanvas:
             #print (canvas.object_to_json())
