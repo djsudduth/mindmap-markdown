@@ -86,6 +86,8 @@ This will create individual markdown files for every mindmap node vs a single ou
 
 Be aware that if you want to export directly to the Obsidian vault, just having an output path isn't enough since a canvas needs to know where the parent vault is located.  Be sure to set the parent vault name in `settings.cfg`  called `obsidian_vault_name`. If your vault is located `c:/Documents/Notes/MyVault` the vault name is just `MyVault`. `Mindmd` can then determine where the canvas, markdown files and media can go.  
 
+You can also set the scale facter to widen or reduce the separation of nodes on the Canvas in `settings.cfg` using `canvas_scale`. Values of about 2.0 to 4.0 seem to work well.  
+
 Note that the media path is relative to the output path in `settings.cfg`
 
 **Canvas mode does not support batch output yet!**
