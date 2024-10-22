@@ -1,12 +1,17 @@
 [![GitHub license](https://img.shields.io/github/license/djsudduth/keep-it-markdown)](https://github.com/djsudduth/keep-it-markdown/blob/main/LICENSE)
 
 # mindmap-markdown
-Mindmap-markdown or mindmd converts [Simplemind](https://simplemind.eu/) mind maps to markdown pages as an additional type to Simplemind's export function. Simplemind is an amazing mind mapping application that is free on mobile devices with significant capabilities to capture information. 
+Mindmap-markdown or **mindmd** converts [Simplemind](https://simplemind.eu/) mind maps to either a **single markdown outline** or an **Obsidian Canvas** as additional types to Simplemind's export function. **Simplemind is an amazing mind mapping application** that is free on mobile devices with significant capabilities to capture information. 
 
-One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
+One of the key missing components with Simplemind exports is that not all information is exported such as outer notes and relations. Plus, having a markdown outline or canvas of the mind map allows for notetaking apps like Obsidian or Logseq to consume the outline easily. 
 
-## Example
-Here is the default example Simplemind mindmap screenshot that is located in the **mindmaps** folder:
+Mindmd will export inner and outer notes, notes on node-to-node links, embedded and linked images, urls, and relations between nodes. Audio files (only audio links), node colors, checkboxes, mindmap-to-mindmap links and icons are not exported. The script will execute on Windows, MacOS or Linux.
+
+## Examples
+
+### Markdown Outline
+
+Here is the default example Simplemind mindmap markdown outline screenshot that is located in the **mindmaps** folder:
 
 ![](mindmaps/HII%20Regions%20Example.png)
 
@@ -24,8 +29,16 @@ The [example converted markdown](https://github.com/djsudduth/mindmap-markdown/b
 
 Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags. 
 
+### Obsidian Canvas
+The canvas feature allows you to create an Obsidian Canvas from Simplemind nodes that are exported to individual markdown notes that includes their inner and outer text.
+
+An example of the sample canvas file output of the mindmap can be seen here:
+![](markdown/HII%20Regions%20Canvas.png)
+
+(Obsidian users please refer to the proper configuration below)
+
 ## Usage
-To run mindmd you can either set your input and output paths in `settings.cfg` file, or, use the input `-i` or output `-o` switches to override the config file.
+To run mindmd in outline mode you can either set your input and output paths in `settings.cfg` file, or, use the input `-i` or output `-o` switches to override the config file.
 
 There are default paths already set in the `settings.cfg` file. However, you can simply test the script against the sample .smmx file by running:
 ```bash
@@ -61,16 +74,26 @@ To add line numbers to each node in the markdown output use:
 ```
 
 #### Obsidian Canvas
-To output the mindmap to an Obsidian canvas vs. a single markdown file, use the `-c` switch along with the input and output flags if needed:
+To output the mindmap to an Obsidian canvas vs. a single markdown outline file, use the `-c` switch along with the input and output flags if needed:
 ```bash
 > python mindmd.py -c
 ```
+or  
+```bash
+> python mindmd.py -c -i myfiles/coolmindmap.smmx
+```
 This will create individual markdown files for every mindmap node vs a single output file. Plus, the canvas file will be output. If your mindmap is large you will have many markdown files!  
+
+Be aware that if you want to export directly to the Obsidian vault, just having an output path isn't enough since a canvas needs to know where the parent vault is located.  Be sure to set the parent vault name in `settings.cfg`  called `obsidian_vault_name`. If your vault is located `c:/Documents/Notes/MyVault` the vault name is just `MyVault`. `Mindmd` can then determine where the canvas, markdown files and media can go.  
 
 Note that the media path is relative to the output path in `settings.cfg`
 
+**Canvas mode does not support batch output yet!**
+
 ###  Markdown
-The markdown output will have a tree structure that is well suited for either Obsidian or Logseq notes. Bullets are added to be compatible with Logseq - but future versions will have a flag to remove them if needed.
+The markdown outline output will have a tree structure that is well suited for either Obsidian or Logseq notes. Bullets are added to be compatible with Logseq - but future versions will have a flag to remove them if needed.
+
+The canvas file output is only supported by Obsidian. Logseq whiteboards are not yet supported.
 
 An example output file can be found in the `markdown` directory
 
