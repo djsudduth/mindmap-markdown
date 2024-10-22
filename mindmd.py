@@ -27,7 +27,8 @@ default_settings = {
     'output_path': "",
     'media_path': "",
     'test_file_name': "",
-    'canvas_scale': ""
+    'canvas_scale': "",
+    'obsidian_vault_name': ""
 }
 
 
@@ -36,6 +37,12 @@ class Test:
     id: str 
     parent: str
     title: str
+
+@dataclass
+class Relation:
+    from_node: int = 0
+    to_node: int = 0
+    text: str = ""
 
 @dataclass
 class Node:
@@ -103,6 +110,20 @@ def load_configs():
     return configdict
 
 
+def normalize_path(path):
+    #Normalizes a relative path by resolving "../" components.
+
+    parts = path.split('/')
+    normalized_parts = []
+    for part in parts:
+        if part == '..':
+            if normalized_parts:
+                normalized_parts.pop()
+        else:
+            normalized_parts.append(part)
+    return '/'.join(normalized_parts)
+
+
 class CanvasNode:
   """Represents a node in Canvas"""
   def __init__(self, type=None, file=None, title=None, text=None, id=None, x=0, y=0, width=0, height=0, color=2):
@@ -111,7 +132,8 @@ class CanvasNode:
     self.title = title
     self.text = text
     self.id = id
-    self.canvas_scale = float(load_configs()["canvas_scale"])
+    configs = load_configs()
+    self.canvas_scale = float(configs["canvas_scale"])
     self.x = int((x - 500) * self.canvas_scale)
     self.y = int((y - 500) * self.canvas_scale)
     self.width = width
@@ -136,9 +158,15 @@ class Canvas:
     self.title = title
     self.base_path = ""  
     self.canvas_path = ""
+    
 
-  def set_base_path(self, base_path):
+  def set_base_path(self, base_path, canvas_vault):
     self.base_path = base_path
+    tpath = base_path.split(os.path.join(canvas_vault, '').replace("\\","/"))
+    if len(tpath) > 0:
+        self.canvas_path = tpath[len(tpath) - 1]
+    else:
+        self.canvas_path = ""
 
   def add_node(self, node, type, text):
     if not isinstance(node, CanvasNode):
@@ -150,7 +178,8 @@ class Canvas:
         pattern = r"[\\/:*?\"<>|]"
         note_file = re.sub(pattern, '', node.title)
         file_path = f"{self.base_path}{note_file}{extension}"
-        node.file = file_path
+        node.file = f"{self.canvas_path}{note_file}{extension}"
+        node.file = normalize_path(node.file)
         if type == ".md":
             # Create the file
             with open(file_path, "wb") as f:
@@ -272,7 +301,6 @@ def check_file_path(filepath):
                 foundfile = True
 
     return(foundpath, foundfile, seemslikefile, pathname, filename)
-
 
 
 
@@ -430,7 +458,7 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
 
 
 
-def format_relations(sm_nodes, infile):
+def format_relations(sm_nodes, infile, crelations):
     tree = ET.parse(infile)
     root = tree.getroot()
     output_list = []
@@ -443,6 +471,8 @@ def format_relations(sm_nodes, infile):
             #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
+        canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(note.text).replace('\n', ' ').strip()))
+        crelations.append(canvas_relation)
     return output_list
 
 
@@ -456,14 +486,16 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
     ee = []
     outline = format_map("-1", sm_nodes, a, ee, 0, numbered, infile, outfile, vf)
     for map in outline:
-        f.write(map)
+        if not ocanvas:
+            f.write(map)
         #media
         #shutil.copy2('/src/dir/file.ext', '/dst/dir/newname.ext')
 
-
-    relations = format_relations(sm_nodes, infile)
+    canvas_relations = []
+    relations = format_relations(sm_nodes, infile, canvas_relations)
     for map in relations:
-        f.write(map)
+        if not ocanvas:
+            f.write(map)
     f.close()
 
     if ocanvas:
@@ -471,11 +503,11 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
         configdict = load_configs()
         out_path = os.path.join(os.path.split(outfile)[0], '').replace("\\","/") #configdict["output_path"]
         media_path = configdict["media_path"]
-        #canvas_path = configdict["canvas_path"]
+        canvas_vault = configdict["obsidian_vault_name"]
 
 
         for node in sm_nodes:
-            canvas.set_base_path(out_path)
+            canvas.set_base_path(out_path, canvas_vault)
             c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
             note_text = node.note + "\n\n" + node.outernote
             if len(node.embedded_image) > 0:
@@ -498,7 +530,7 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
         imagelist = []
         coordinates = []
         for node in sm_nodes:
-            canvas.set_base_path(out_path + media_path)
+            canvas.set_base_path(out_path + media_path, canvas_vault)
             if len(node.image) > 0:
                 image_names = re.findall(r"(.{44})", node.image)
                 for im in image_names:
@@ -516,6 +548,14 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
             canvas.add_node(c_node, ".png", "")
 
+        for crel in canvas_relations:
+            p = determine_relative_position(canvas.nodes[crel.from_node], canvas.nodes[crel.to_node])
+            from_to = p.split(",")
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), canvas.nodes[crel.from_node].id, from_to[0], canvas.nodes[crel.to_node].id, from_to[1], crel.text)
+            canvas.add_edge(c_edge)
+
+
+
 
 
 def string_to_hexhash(alphanumeric_string, hash_len):
@@ -528,7 +568,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** BETA!!! Mindmap Markdown v-0.0.8 **\n")
+    print ("\n** BETA!!! Mindmap Markdown v-0.0.9 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -556,7 +596,7 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
-    ocanvas = True
+    #ocanvas = True
     nums = False
 
     if numbered:
