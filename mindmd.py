@@ -568,7 +568,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** BETA!!! Mindmap Markdown v-0.0.9 **\n")
+    print ("\n** Mindmap Markdown v-0.1.0 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -599,9 +599,12 @@ def main():
     #ocanvas = True
     nums = False
 
+    if ocanvas and batch_dir:
+        print ("Obsidian Canvas output is not yet supported in batch mode!\n")
+        exit()
+
     if numbered:
         nums = True
-
 
     if in_name != None:
         in_path = in_name
