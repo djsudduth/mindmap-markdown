@@ -1,18 +1,18 @@
 - Nebulae Emissions
 	- Types
 		- Planetary Nebulae
-			- ![](ddd/media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
+			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
 		- ~~<u>***HII Regions***</u>~~
 			- Orion Nebula
 				- The radius of the Orion Nebula is a few parsecs
 				- *Outer Note*: Energetic ultraviolet starlight (most of which comes from the hot <u>class O6</u> star<u> Theta-1 Orionis C</u>) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of <u>emission lines</u>. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.
-				- ![](ddd/media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
+				- ![](media/69afb9984c64a0b59fc2061f01f86004dd02efb5.png)
 			- Dorados in the LMC
 				- Giant region on the order of 100 parsecs
-				- ![](ddd/media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
+				- ![](media/3ba6427a0bcfcfe5bb80836a46e01d50b09b29da.png)
 		- Wolf-Rayet Shells
-			- ![](ddd/media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
-			- ![](ddd/media/6f1abb1016cf5dab02e67246235e50b5fd89850d.png)
+			- ![](media/9b0722981ac97bcc14ef5440d1fd68265447fcab.png)
+			- ![](media/6f1abb1016cf5dab02e67246235e50b5fd89850d.png)
 		- AGNs
 	- Basic Physics
 		- Stromgren Sphere
