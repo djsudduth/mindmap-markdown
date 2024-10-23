@@ -636,11 +636,15 @@ def main():
             infile = vs.in_full_path
 
         if out_name == None:
-            ext = os.path.splitext(vs.in_file)
-            outfile = vs.out_path + ext[0] + ".md"
+            if vs.out_path_exists == True:
+                ext = os.path.splitext(vs.in_file)
+                outfile = vs.out_path + ext[0] + ".md"
+            else:
+                print ("Output file path: " + vs.out_path + " is invalid or missing!\n")  
+                exit()
         else:
             if vs.out_path_exists == False or vs.out_seems_filelike == False:
-                print ("Output file path and/or name are invalid\n")
+                print ("Output file path: " + vs.out_path + " and/or name are invalid\n")
                 exit()
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)

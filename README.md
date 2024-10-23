@@ -86,7 +86,7 @@ This will create individual markdown files for every mindmap node vs a single ou
 
 **Try to use the default file and settings to test this at first**  
 
-Be aware that if you want to export directly to the Obsidian vault, just having an output path isn't enough since a canvas needs to know where the parent vault is located.  Be sure to set the parent vault name in `settings.cfg`  called `obsidian_vault_name`. If your vault is located `c:/Documents/Notes/MyVault` the vault name is just `MyVault`. `Mindmd` can then determine where the canvas, markdown files and media can go.  
+Be aware that if you want to export directly to the Obsidian vault, just having an output path isn't enough since a canvas needs to know where the parent vault is located in order to map relative paths correctly.  Be sure to set the parent vault name in `settings.cfg`  called `obsidian_vault_name`. If your vault is located `c:/Documents/Notes/MyVault` the vault name is just `MyVault`. `Mindmd` can then use the `output_path` to determine where the canvas, markdown files and media can go.  
 
 You can also set the scale factor to widen or reduce the separation of nodes on the Canvas in `settings.cfg` using `canvas_scale`. Values of about 2.0 to 4.0 seem to work well.  
 
