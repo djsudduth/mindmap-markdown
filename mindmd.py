@@ -476,7 +476,7 @@ def format_relations(sm_nodes, infile, crelations):
     return output_list
 
 
-def write_output(infile, outfile, numbered, vf, ocanvas):
+def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
     # load smmx xml content
     sm_nodes = parse_mind_map(infile)
 
@@ -508,11 +508,19 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
 
         for node in sm_nodes:
             canvas.set_base_path(out_path, canvas_vault)
-            c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
             note_text = node.note + "\n\n" + node.outernote
-            if len(node.embedded_image) > 0:
-                note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
-            canvas.add_node(c_node, ".md", note_text)
+            if not maponly:
+                c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+                if len(node.embedded_image) > 0:
+                    note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
+                canvas.add_node(c_node, ".md", note_text)
+            else:
+                c_node = CanvasNode(type="text", file = None, title="", text=node.title + "\n\n" + note_text, id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+                canvas.add_node(c_node, "", note_text)              
+                if len(node.embedded_image) > 0:
+                    c_node = CanvasNode(type="file", file = None, title=node.title, text="", 
+                        id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+                    canvas.add_node(c_node, ".png", "") 
 
         for parent, edge in enumerate(ee):
             pvals = edge.split(",")
@@ -568,7 +576,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.1.0 **\n")
+    print ("\n** Mindmap Markdown v-0.2.0 **\n")
        #try:
             #return(self._configdict[key])
 
@@ -596,7 +604,8 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
-    #ocanvas = True
+    ocanvas = True
+    maponly = True
     nums = False
 
     if ocanvas and batch_dir:
@@ -649,7 +658,8 @@ def main():
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
         unzip_file(infile, '.')
-        write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
+
+        write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas, maponly)
         if ocanvas:
             #print (canvas.object_to_json())
             cname = outfile.split(".")[0]
@@ -686,7 +696,7 @@ def main():
                         continue
                     outfile = ext[0] + ".md"
                     print ("Mindmap: " + f + " ----> Markdown: " + batch_dir + outfile)
-                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs, ocanvas)
+                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs, ocanvas, maponly)
 
     if not os.path.exists(vs.out_full_media_path):
         os.makedirs(vs.out_full_media_path)
