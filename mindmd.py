@@ -143,13 +143,14 @@ class CanvasNode:
 
 class CanvasEdge:
   """Represents an edge in Canvas"""
-  def __init__(self, id=None, fromNode=None, fromSide=None, toNode=None, toSide=None, label=None):
+  def __init__(self, id=None, fromNode=None, fromSide=None, toNode=None, toSide=None, label=None, toEnd=None):
     self.id = id
     self.fromNode = fromNode
     self.fromSide = fromSide
     self.toNode = toNode
     self.toSide = toSide
     self.label = label
+    self.toEnd = toEnd
 
 class Canvas:
   def __init__(self, title):
@@ -528,7 +529,7 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
                     relation = sm_nodes[j].relationnote
                     if ":" in relation:
                         relation = relation.split(":")[1].strip().split(")")[1].strip()
-                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation)
+                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation, '')
                     canvas.add_edge(c_edge)
 
         imagelist = []
@@ -545,12 +546,25 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
                     if len(pair) > 0:
                         pair = str(pair)
                         top, left = pair.split(",")
-                        coordinates.append((node.id, top, left))
+                        coordinates.append((node.id, top, left, node.guid))
         ex_images = list(zip(imagelist, coordinates))
         for images in ex_images:
+            temp_node = Node()
+            temp_node.x = float(sm_nodes[int(images[1][0])].x) + float(images[1][1])
+            temp_node.y = float(sm_nodes[int(images[1][0])].y) + float(images[1][2])
+            temp_node.width = 300.00
+            temp_node.height = 150.00
+            sm_nodes[int(images[1][0])].width = 300.00
+            sm_nodes[int(images[1][0])].height = 150.00
+            p = determine_relative_position(sm_nodes[int(images[1][0])], temp_node)
+            from_to = p.split(",")
+
             c_node = CanvasNode(type="file", file = None, title=images[0].split(".")[0], text="", 
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
             canvas.add_node(c_node, ".png", "")
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), sm_nodes[int(images[1][0])].guid, from_to[0], c_node.id,  from_to[1], '', "None")
+            canvas.add_edge(c_edge)
+
         for node in sm_nodes:
             if len(node.embedded_image) > 0:
                 c_node = CanvasNode(type="file", file = None, title=node.title, text="", 
@@ -561,7 +575,7 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
         for crel in canvas_relations:
             p = determine_relative_position(canvas.nodes[crel.from_node], canvas.nodes[crel.to_node])
             from_to = p.split(",")
-            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), canvas.nodes[crel.from_node].id, from_to[0], canvas.nodes[crel.to_node].id, from_to[1], crel.text)
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), canvas.nodes[crel.from_node].id, from_to[0], canvas.nodes[crel.to_node].id, from_to[1], crel.text, '')
             canvas.add_edge(c_edge)
 
 
@@ -578,7 +592,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.2.0 **\n")
+    print ("\n** Mindmap Markdown v-0.2.1 **\n")
        #try:
             #return(self._configdict[key])
 
