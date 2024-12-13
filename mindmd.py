@@ -517,10 +517,6 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
             else:
                 c_node = CanvasNode(type="text", file = None, title="", text=node.title + "\n\n" + note_text, id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
                 canvas.add_node(c_node, "", note_text)              
-                if len(node.embedded_image) > 0:
-                    c_node = CanvasNode(type="file", file = None, title=node.title, text="", 
-                        id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x), y=float(node.y), width=300.00, height=140.00)
-                    canvas.add_node(c_node, ".png", "") 
 
         for parent, edge in enumerate(ee):
             pvals = edge.split(",")
@@ -555,6 +551,12 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
             c_node = CanvasNode(type="file", file = None, title=images[0].split(".")[0], text="", 
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
             canvas.add_node(c_node, ".png", "")
+        for node in sm_nodes:
+            if len(node.embedded_image) > 0:
+                c_node = CanvasNode(type="file", file = None, title=node.title, text="", 
+                    id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) - 150.00, y=float(node.y), width=300.00, height=140.00)
+                canvas.add_node(c_node, ".png", "") 
+
 
         for crel in canvas_relations:
             p = determine_relative_position(canvas.nodes[crel.from_node], canvas.nodes[crel.to_node])
@@ -596,6 +598,8 @@ def main():
                     help="Flag for numbered nodes")
     parser.add_argument("--canvas", "-c", default=False, action="store_true",
                     help="Flag for output of Obsidian canvas")
+    parser.add_argument("--textnodes", "-t", default=False, action="store_true",
+                    help="Flag for output of Obsidian canvas")
     args = parser.parse_args()
 
 
@@ -604,8 +608,9 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
-    ocanvas = True
-    maponly = True
+    maponly = args.textnodes
+    #ocanvas = True
+    #maponly = True
     nums = False
 
     if ocanvas and batch_dir:
