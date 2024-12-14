@@ -94,7 +94,7 @@ def load_configs():
     config = configparser.ConfigParser()
     configdict = {}
 
-    cfile = config.read(CONFIG_FILE)
+    cfile = config.read(CONFIG_FILE, encoding='utf-8')
     if not cfile:
         config[DEFAULT_SECTION] = default_settings
         try:
