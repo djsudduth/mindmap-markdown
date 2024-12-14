@@ -566,9 +566,10 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
             canvas.add_edge(c_edge)
 
         for node in sm_nodes:
-            if len(node.embedded_image) > 0:
-                c_node = CanvasNode(type="file", file = None, title=node.title, text="", 
-                    id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) - 150.00, y=float(node.y), width=300.00, height=140.00)
+            if len(node.embedded_image) > 0 and maponly:
+                image_title = node.embedded_image.split(".")[0]
+                c_node = CanvasNode(type="file", file = None, title=image_title, text="", 
+                    id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) - 120.00, y=float(node.y), width=300.00, height=140.00)
                 canvas.add_node(c_node, ".png", "") 
 
 
