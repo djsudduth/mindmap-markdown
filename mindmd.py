@@ -253,9 +253,23 @@ def determine_relative_position(node1: CanvasNode, node2: CanvasNode) -> str:
 
 canvas = Canvas("Null")
 
+def convert_png_to_jpg(png_file, jpg_file):
+    """Converts a PNG image to a JPEG image."""
+    try:
+        # Open the PNG image
+        #with Image.open(png_file) as img:
+            # Convert the image to RGB mode (required for JPEG)
+            #img = img.convert("RGB")
+            # Save the image as JPEG
+            #img.save(jpg_file, "JPEG")
+        print(f"Successfully converted {png_file} to {jpg_file}")
+    except Exception as e:
+        print(f"Error converting image: {e}")
+
+
 
 def unzip_file(zippath, filepath):
-    extracted_file = zipfile.ZipFile(zippath)
+    extracted_file = zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8")
     extracted_file.extractall(filepath)
 
 def validate_files(in_filepath, out_filepath, media_path):
@@ -593,9 +607,11 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
+
     print ("\n** Mindmap Markdown v-0.2.1 **\n")
        #try:
             #return(self._configdict[key])
+
 
     configdict = load_configs()
     in_path = configdict["input_path"]
@@ -626,6 +642,7 @@ def main():
     maponly = args.textnodes
     #ocanvas = True
     #maponly = True
+    #numbered = True
     nums = False
 
     if ocanvas and batch_dir:
@@ -726,6 +743,11 @@ def main():
         except:
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
+    for media in media_files:
+        if not os.path.isfile(vs.out_full_media_path + media):
+            print ("waiting...")
+            time.sleep(1)
+
 
 
 
