@@ -458,7 +458,7 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                                 #media
                                 for attempt in range(1, 2):
                                     try:
-                                        shutil.copy2("images/" + mfile, out_path + media_path + mfile)
+                                        shutil.copyfile("images/" + mfile, out_path + media_path + mfile)
                                     except Exception as e:
                                         if attempt == 2:
                                             print ("Image file 'images/" + mfile + "' missing or not accessible!!")
