@@ -10,6 +10,7 @@ import json
 import uuid
 import random
 import time
+import filecmp
 import string
 import configparser
 import xml.etree.ElementTree as ET
@@ -268,9 +269,21 @@ def convert_png_to_jpg(png_file, jpg_file):
 
 
 
-def unzip_file(zippath, filepath):
-    extracted_file = zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8")
-    extracted_file.extractall(filepath)
+def unzip_file(zippath, filepath):    #extracted_file = zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8")
+    #extracted_file.extractall(filepath)
+    with zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8") as zip_ref:
+        for file in zip_ref.namelist():
+            zip_ref.extract(file, filepath)
+                                    
+        for attempt in range(1, 3):
+            for file in zip_ref.namelist():
+                if not os.path.isfile(file) and attempt <= 2:
+                    print ("Problem extracting smmx images - trying again\n")
+                    time.sleep(0.5)
+                    break
+                
+
+
 
 def validate_files(in_filepath, out_filepath, media_path):
     fs = FilePaths()
@@ -456,15 +469,16 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                                 a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
                                 #e.append(str(node.parent) + "," + str(media_path + mfile) + "," + "i")
                                 #media
-                                for attempt in range(1, 2):
+                                for attempt in range(1, 3):
                                     try:
-                                        shutil.copyfile("images/" + mfile, out_path + media_path + mfile)
+                                        shutil.copy2("images/" + mfile, out_path + media_path + mfile)
                                     except Exception as e:
-                                        print ("Image copy error: " + str(e))
+                                        #print ("Image copy error: " + str(e))
                                         if attempt == 2:
                                             print ("Image file 'images/" + mfile + "' missing or not accessible!!")
                                             continue
                                         time.sleep(0.25)
+                            #check filecount in images matches file count 
 
 
             
@@ -607,7 +621,6 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 
 def main():
-
 
     print ("\n** Mindmap Markdown v-0.2.1 **\n")
        #try:
