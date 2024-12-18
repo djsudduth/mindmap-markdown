@@ -469,15 +469,15 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                                 a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
                                 #e.append(str(node.parent) + "," + str(media_path + mfile) + "," + "i")
                                 #media
-                                for attempt in range(1, 11):
+                                for attempt in range(1, 21):
                                     try:
                                         shutil.copy2("images/" + mfile, out_path + media_path + mfile)
                                     except Exception as e:
                                         #print ("Image copy error: " + str(e))
-                                        if attempt == 10:
+                                        if attempt == 20:
                                             print ("Image file 'images/" + mfile + "' missing or not accessible!!")
                                             continue
-                                        time.sleep(0.5)
+                                        time.sleep(1.0)
                             #check filecount in images matches file count 
 
 
@@ -622,7 +622,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.2.1 **\n")
+    print ("\n** Mindmap Markdown v-0.2.2 **\n")
        #try:
             #return(self._configdict[key])
 
