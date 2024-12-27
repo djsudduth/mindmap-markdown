@@ -10,6 +10,7 @@ import json
 import uuid
 import random
 import time
+import sys
 import filecmp
 import string
 import configparser
@@ -271,18 +272,24 @@ def convert_png_to_jpg(png_file, jpg_file):
 
 def unzip_file(zippath, filepath):    #extracted_file = zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8")
     #extracted_file.extractall(filepath)
-    with zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8") as zip_ref:
-        for file in zip_ref.namelist():
-            zip_ref.extract(file, filepath)
-                                    
-        for attempt in range(1, 3):
-            for file in zip_ref.namelist():
-                if not os.path.isfile(file) and attempt <= 2:
-                    print ("Problem extracting smmx images - trying again\n")
-                    time.sleep(0.5)
-                    break
+    #if sys.version_info >= (3,11,0):
+    if sys.version_info >= (3,11,0):
+        with zipfile.ZipFile(zippath, "r", metadata_encoding="utf-8") as zip_ref:
+            _extract_files(zip_ref, filepath)
+    else:
+        with zipfile.ZipFile(zippath, "r") as zip_ref:
+            _extract_files(zip_ref, filepath)
                 
+def _extract_files(zip_ref: zipfile.ZipFile, filepath: str):
+    for file in zip_ref.namelist():
+        zip_ref.extract(file, filepath)
 
+    for attempt in range(1, 3):
+        for file in zip_ref.namelist():
+            if not os.path.isfile(file) and attempt <= 2:
+                print("Problem extracting smmx images - trying again\n")
+                time.sleep(0.5)
+                break
 
 
 def validate_files(in_filepath, out_filepath, media_path):
