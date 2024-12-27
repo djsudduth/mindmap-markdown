@@ -503,12 +503,14 @@ def format_relations(sm_nodes, infile, crelations):
     relations =  root.findall("./mindmap/relations/relation")
     for relation in relations:
         full_relation = "- (" + relation.get('source') + ") " + sm_nodes[int(relation.get('source'))].title
+        note = None
         for note in relation.findall("children/text/note"):
             full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
             #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
-        canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(note.text).replace('\n', ' ').strip()))
+        cantext = note.text if note else ""
+        canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(cantext).replace('\n', ' ').strip()))
         crelations.append(canvas_relation)
     return output_list
 
@@ -628,6 +630,7 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 
 def main():
+
 
     print ("\n** Mindmap Markdown v-0.2.2 **\n")
        #try:
