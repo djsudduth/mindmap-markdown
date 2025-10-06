@@ -63,6 +63,8 @@ class Node:
     x: str = ""
     y: str = ""
     guid: str = ""
+    checkboxmode: str = ""
+    checked: str = ""
 
 
 @dataclass
@@ -363,7 +365,7 @@ def replace_with_markdown(text):
 
 
 
-def parse_mind_map(infile):
+def parse_mind_map(infile, maponly):
  
     plist = {}
     sm_nodes = []
@@ -394,6 +396,14 @@ def parse_mind_map(infile):
         else:
             topic_node.title = topic.get('guid')
 
+        topic_node.checkboxmode = topic.get('checkbox-mode')
+        topic_node.checked = topic.get('checked')
+        if (topic_node.checkboxmode == 'checkbox') and maponly:
+            if topic_node.checked == 'true':
+                topic_node.title = "- [x] " + topic_node.title
+            else:
+                topic_node.title = "- [ ] " + topic_node.title
+        
         topic_node.x = topic.get('x')
         topic_node.y = topic.get('y')
         g = topic.get('guid')
@@ -401,7 +411,7 @@ def parse_mind_map(infile):
             g = uuid.uuid4().hex
         topic_node.guid = string_to_hexhash(g, 16)
         topic_node.parent = topic.get('parent')
-        #topic_node.guid = topic.get('guid')
+         #topic_node.guid = topic.get('guid')
       
         for note in topic.findall("note"):
             topic_node.note += replace_with_markdown(note.text.strip().replace('\n',' '))
@@ -509,7 +519,7 @@ def format_relations(sm_nodes, infile, crelations):
             #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
-        cantext = note.text if note else ""
+        cantext = note.text if (note is not None) else ""
         canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(cantext).replace('\n', ' ').strip()))
         crelations.append(canvas_relation)
     return output_list
@@ -517,7 +527,7 @@ def format_relations(sm_nodes, infile, crelations):
 
 def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
     # load smmx xml content
-    sm_nodes = parse_mind_map(infile)
+    sm_nodes = parse_mind_map(infile, maponly)
 
     #output
     f = open(outfile,"w", encoding='utf8')
@@ -548,13 +558,15 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
         for node in sm_nodes:
             canvas.set_base_path(out_path, canvas_vault)
             note_text = node.note + "\n\n" + node.outernote
+            cnheight = 70.0 if (len(note_text) < 40 and len(node.embedded_image) == 0 and len(node.title) < 15) else 100.0
+            cnheight = 170.0 if (len(node.embedded_image) > 0) or (len(note_text) >40) else cnheight
             if not maponly:
-                c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+                c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=cnheight)
                 if len(node.embedded_image) > 0:
                     note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
                 canvas.add_node(c_node, ".md", note_text)
             else:
-                c_node = CanvasNode(type="text", file = None, title="", text=node.title + "\n\n" + note_text, id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
+                c_node = CanvasNode(type="text", file = None, title="", text=node.title + "\n\n" + note_text, id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=cnheight)
                 canvas.add_node(c_node, "", note_text)              
 
         for parent, edge in enumerate(ee):
@@ -664,6 +676,7 @@ def main():
     numbered = args.numbered
     ocanvas = args.canvas
     maponly = args.textnodes
+
     #ocanvas = True
     #maponly = True
     #numbered = True
