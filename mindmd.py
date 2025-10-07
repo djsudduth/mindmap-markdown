@@ -398,10 +398,10 @@ def parse_mind_map(infile, ocanvas, maponly):
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
-        if (ocanvas):
-            topic_node.title = replace_with_markdown(topic.get('text'))
-        else:
+        if (ocanvas and not maponly):
             topic_node.title = topic.get('text')
+        else:
+            topic_node.title = replace_with_markdown(topic.get('text'))
 
         if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')

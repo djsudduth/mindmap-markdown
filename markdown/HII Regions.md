@@ -2,7 +2,7 @@
 	- Types
 		- Planetary Nebulae
 			- ![](media/5d4493207aed3f31bcc366a6a7bee2c5254c0d02.png)
-		- \\~\\_\\/\\*HII Regions\\*\\/\\_\\~
+		- ~~<u>***HII Regions***</u>~~
 			- Orion Nebula
 				- The radius of the Orion Nebula is a few parsecs
 				- *Outer Note*: Energetic ultraviolet starlight (most of which comes from the hot <u>class O6</u> star<u> Theta-1 Orionis C</u>) ionizes a portion of the molecular cloud, that is, it strips electrons from the nebula's atoms, which are mostly hydrogen. When the charged ions recombine with the free electrons, the energy is given back up as light in the form of <u>emission lines</u>. The Hydrogen Alpha line helps give much of the nebula its reddish color. From the strong neutral helium line at 5876 Angstroms we can get the abundacnce of helium relative to that of hydrogen.
@@ -19,9 +19,9 @@
 			- Emission rate vs recombination rate
 				- 4/3 pi R<sup>3</sup> e n<sub>e</sub> n<sub>p</sub> a<sub>B</sub> (T(e)) = Q (N, Teff, L)  where Q is the ionization rate
 				-  Cooling
-		- \\_Massive Stars\\_
+		- <u>Massive Stars</u>
 
-			--> (*Relation Text*: (\\_Massive Stars\\_) emit large amounts of) -->
+			--> (*Relation Text*: (<u>Massive Stars</u>) emit large amounts of) -->
 			- UV Ionization
 				- Ionization Bounded
 				- Matter Bounded
@@ -31,7 +31,7 @@
 		- Helium
 		- Oxygen (OI, OII, OIII)
 			- A good example of a collisional excitation line coolant is the OIII 4959, 5007 doublet, emitted by doubly ionized oxygen - a main coolant of HII regions. These emissions give the greenish hue to HII regions like the Orion Nebula.
-		- \\/Nitrogen (NII)\\/
+		- *Nitrogen (NII)*
 
 
 - Relations:
