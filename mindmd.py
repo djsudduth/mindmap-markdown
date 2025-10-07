@@ -180,8 +180,9 @@ class Canvas:
     # Create file for "file" type nodes
     if type == ".md" or type ==".png": # and node.file:
         extension = type 
+        title = post_clean_markdown(node.title)
         pattern = r"[\\/:*?\"<>|]"
-        note_file = re.sub(pattern, '', node.title)
+        note_file = re.sub(pattern, '', title)
         file_path = f"{self.base_path}{note_file}{extension}"
         node.file = f"{self.canvas_path}{note_file}{extension}"
         node.file = normalize_path(node.file)
@@ -362,10 +363,17 @@ def replace_with_markdown(text):
             re.sub(r"\\_", "<u>", re.sub(r"\\\^", "<sup>", re.sub(r"\\`", "<sub>", std_md)))))
     else:
         return()
+    
+
+def post_clean_markdown(text):
+    if text is not None:
+        cleaned = re.sub(r'~~(.*?)~~', r'\1', text)
+        cleaned = re.sub(r'</?(u|sub|sup)>', '', cleaned, flags=re.IGNORECASE)
+        return(cleaned)
 
 
 
-def parse_mind_map(infile, maponly):
+def parse_mind_map(infile, ocanvas, maponly):
  
     plist = {}
     sm_nodes = []
@@ -390,7 +398,11 @@ def parse_mind_map(infile, maponly):
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
-        topic_node.title = replace_with_markdown(topic.get('text'))
+        if (ocanvas):
+            topic_node.title = replace_with_markdown(topic.get('text'))
+        else:
+            topic_node.title = topic.get('text')
+
         if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')
         else:
@@ -469,6 +481,7 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                 if field.name != 'title' and field.name != 'id' and \
                     field.name != 'parent' and field.name != 'relationnote' and \
                     field.name != 'x' and field.name != 'y' and field.name != 'guid' and \
+                    field.name != 'checkboxmode' and field.name != 'checked' and \
                     field.name != 'image_pos' and field.name != 'cimages':
                     attr = getattr(tree_nodes[int(my_id)], field.name) 
                     if attr:
@@ -515,8 +528,8 @@ def format_relations(sm_nodes, infile, crelations):
         full_relation = "- (" + relation.get('source') + ") " + sm_nodes[int(relation.get('source'))].title
         note = None
         for note in relation.findall("children/text/note"):
-            full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
-            #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
+            #markdown not supported in Canvas edges full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
+            full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
         cantext = note.text if (note is not None) else ""
@@ -527,7 +540,7 @@ def format_relations(sm_nodes, infile, crelations):
 
 def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
     # load smmx xml content
-    sm_nodes = parse_mind_map(infile, maponly)
+    sm_nodes = parse_mind_map(infile, ocanvas, maponly)
 
     #output
     f = open(outfile,"w", encoding='utf8')
@@ -558,8 +571,8 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
         for node in sm_nodes:
             canvas.set_base_path(out_path, canvas_vault)
             note_text = node.note + "\n\n" + node.outernote
-            cnheight = 70.0 if (len(note_text) < 40 and len(node.embedded_image) == 0 and len(node.title) < 15) else 100.0
-            cnheight = 170.0 if (len(node.embedded_image) > 0) or (len(note_text) >40) else cnheight
+            cnheight = 70.0 if (len(note_text) < 40 and len(node.embedded_image) == 0 and len(node.title) < 20) else 100.0
+            cnheight = 170.0 if ((len(node.embedded_image) > 0) and not maponly) or (len(note_text) > 40) else cnheight
             if not maponly:
                 c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=cnheight)
                 if len(node.embedded_image) > 0:
@@ -621,6 +634,9 @@ def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
                 c_node = CanvasNode(type="file", file = None, title=image_title, text="", 
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) - 120.00, y=float(node.y), width=300.00, height=140.00)
                 canvas.add_node(c_node, ".png", "") 
+                #future work - add edge to embedded images
+                # c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), c_node.id, 
+                                    #from_to[0], canvas.nodes[crel.to_node].id, from_to[1], '', '')
 
 
         for crel in canvas_relations:
