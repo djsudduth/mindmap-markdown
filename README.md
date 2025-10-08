@@ -30,7 +30,7 @@ The [example converted markdown](https://github.com/djsudduth/mindmap-markdown/b
 Title and note text formatting in Simplemind is converted as best as possible to markdown formatting. Underline, Superscript and Subscripts are converted to html tags. 
 
 ### Obsidian Canvas
-The canvas feature allows you to create an Obsidian Canvas from Simplemind nodes that are exported to individual markdown notes that includes their inner and outer text.
+The canvas feature allows you to create an Obsidian Canvas from Simplemind nodes that are exported to individual markdown notes or cards that includes their inner and outer text.
 
 An example of the sample canvas file output of the mindmap can be seen here:
 ![](markdown/HII%20Regions%20Canvas.png)
@@ -74,7 +74,9 @@ To add line numbers to each node in the markdown output use:
 ```
 
 #### Obsidian Canvas
-To output the mindmap to an Obsidian canvas vs. a single markdown outline file, use the `-c` switch along with the input flag if needed:
+There are **two options** to create an Obsidian canvas. You can create all of the Simplemind nodes to individual markdown files, or, you can have the mindmap nodes just as cards in a single canvas without files. 
+
+To output the mindmap to an Obsidian canvas with multiple markdown files vs. a single markdown outline file, use the `-c` switch along with the input flag if needed:
 ```bash
 > python mindmd.py -c
 ```
@@ -83,6 +85,11 @@ or
 > python mindmd.py -c -i myfiles/coolmindmap.smmx
 ```
 This will create individual markdown files for every mindmap node vs a single output file. Plus, the canvas file will be output. If your mindmap is large you will have many markdown files!  
+
+If you only want cards and not multiple output files in your canvas, use the `-t` in addition to the canvas flag `-c`:
+```bash
+> python mindmd.py -c -t
+```
 
 **Try to use the default file and settings to test this at first**  
 

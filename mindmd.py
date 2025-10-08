@@ -10,6 +10,8 @@ import json
 import uuid
 import random
 import time
+import sys
+import filecmp
 import string
 import configparser
 import xml.etree.ElementTree as ET
@@ -61,6 +63,8 @@ class Node:
     x: str = ""
     y: str = ""
     guid: str = ""
+    checkboxmode: str = ""
+    checked: str = ""
 
 
 @dataclass
@@ -94,7 +98,7 @@ def load_configs():
     config = configparser.ConfigParser()
     configdict = {}
 
-    cfile = config.read(CONFIG_FILE)
+    cfile = config.read(CONFIG_FILE, encoding='utf-8')
     if not cfile:
         config[DEFAULT_SECTION] = default_settings
         try:
@@ -143,13 +147,14 @@ class CanvasNode:
 
 class CanvasEdge:
   """Represents an edge in Canvas"""
-  def __init__(self, id=None, fromNode=None, fromSide=None, toNode=None, toSide=None, label=None):
+  def __init__(self, id=None, fromNode=None, fromSide=None, toNode=None, toSide=None, label=None, toEnd=None):
     self.id = id
     self.fromNode = fromNode
     self.fromSide = fromSide
     self.toNode = toNode
     self.toSide = toSide
     self.label = label
+    self.toEnd = toEnd
 
 class Canvas:
   def __init__(self, title):
@@ -175,8 +180,9 @@ class Canvas:
     # Create file for "file" type nodes
     if type == ".md" or type ==".png": # and node.file:
         extension = type 
+        title = post_clean_markdown(node.title)
         pattern = r"[\\/:*?\"<>|]"
-        note_file = re.sub(pattern, '', node.title)
+        note_file = re.sub(pattern, '', title)
         file_path = f"{self.base_path}{note_file}{extension}"
         node.file = f"{self.canvas_path}{note_file}{extension}"
         node.file = normalize_path(node.file)
@@ -252,10 +258,42 @@ def determine_relative_position(node1: CanvasNode, node2: CanvasNode) -> str:
 
 canvas = Canvas("Null")
 
+def convert_png_to_jpg(png_file, jpg_file):
+    """Converts a PNG image to a JPEG image."""
+    try:
+        # Open the PNG image
+        #with Image.open(png_file) as img:
+            # Convert the image to RGB mode (required for JPEG)
+            #img = img.convert("RGB")
+            # Save the image as JPEG
+            #img.save(jpg_file, "JPEG")
+        print(f"Successfully converted {png_file} to {jpg_file}")
+    except Exception as e:
+        print(f"Error converting image: {e}")
 
-def unzip_file(zippath, filepath):
-    extracted_file = zipfile.ZipFile(zippath)
-    extracted_file.extractall(filepath)
+
+
+def unzip_file(zippath, filepath):    #extracted_file = zipfile.ZipFile(zippath,"r", metadata_encoding = "utf-8")
+    #extracted_file.extractall(filepath)
+    #if sys.version_info >= (3,11,0):
+    if sys.version_info >= (3,11,0):
+        with zipfile.ZipFile(zippath, "r", metadata_encoding="utf-8") as zip_ref:
+            _extract_files(zip_ref, filepath)
+    else:
+        with zipfile.ZipFile(zippath, "r") as zip_ref:
+            _extract_files(zip_ref, filepath)
+                
+def _extract_files(zip_ref: zipfile.ZipFile, filepath: str):
+    for file in zip_ref.namelist():
+        zip_ref.extract(file, filepath)
+
+    for attempt in range(1, 3):
+        for file in zip_ref.namelist():
+            if not os.path.isfile(file) and attempt <= 2:
+                print("Problem extracting smmx images - trying again\n")
+                time.sleep(0.5)
+                break
+
 
 def validate_files(in_filepath, out_filepath, media_path):
     fs = FilePaths()
@@ -325,10 +363,20 @@ def replace_with_markdown(text):
             re.sub(r"\\_", "<u>", re.sub(r"\\\^", "<sup>", re.sub(r"\\`", "<sub>", std_md)))))
     else:
         return()
+    
+
+def post_clean_markdown(text):
+    if text is not None:
+        cleaned = re.sub(r'\*', r'', text)
+        cleaned = re.sub(r'~~(.*?)~~', r'\1', cleaned)
+        cleaned = re.sub(r'-(.*?)-', r'\1', cleaned)
+        cleaned = re.sub(r'_(.*?)_', r'\1', cleaned)
+        cleaned = re.sub(r'</?(u|sub|sup)>', '', cleaned, flags=re.IGNORECASE)
+        return(cleaned)
 
 
 
-def parse_mind_map(infile):
+def parse_mind_map(infile, ocanvas, maponly):
  
     plist = {}
     sm_nodes = []
@@ -353,12 +401,24 @@ def parse_mind_map(infile):
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
+        #if (ocanvas and not maponly):
+        #    topic_node.title = topic.get('text')
+        #else:
         topic_node.title = replace_with_markdown(topic.get('text'))
+
         if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')
         else:
             topic_node.title = topic.get('guid')
 
+        topic_node.checkboxmode = topic.get('checkbox-mode')
+        topic_node.checked = topic.get('checked')
+        if (topic_node.checkboxmode == 'checkbox') and maponly:
+            if topic_node.checked == 'true':
+                topic_node.title = "- [x] " + topic_node.title
+            else:
+                topic_node.title = "- [ ] " + topic_node.title
+        
         topic_node.x = topic.get('x')
         topic_node.y = topic.get('y')
         g = topic.get('guid')
@@ -366,7 +426,7 @@ def parse_mind_map(infile):
             g = uuid.uuid4().hex
         topic_node.guid = string_to_hexhash(g, 16)
         topic_node.parent = topic.get('parent')
-        #topic_node.guid = topic.get('guid')
+         #topic_node.guid = topic.get('guid')
       
         for note in topic.findall("note"):
             topic_node.note += replace_with_markdown(note.text.strip().replace('\n',' '))
@@ -424,6 +484,7 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                 if field.name != 'title' and field.name != 'id' and \
                     field.name != 'parent' and field.name != 'relationnote' and \
                     field.name != 'x' and field.name != 'y' and field.name != 'guid' and \
+                    field.name != 'checkboxmode' and field.name != 'checked' and \
                     field.name != 'image_pos' and field.name != 'cimages':
                     attr = getattr(tree_nodes[int(my_id)], field.name) 
                     if attr:
@@ -441,14 +502,16 @@ def format_map(parent_value, tree_nodes, a, ee, level, numbered, infile, outfile
                                 a.append("\t"*(level+1) + "- ![](" + media_path + mfile + ")\n")
                                 #e.append(str(node.parent) + "," + str(media_path + mfile) + "," + "i")
                                 #media
-                                for attempt in range(1, 2):
+                                for attempt in range(1, 21):
                                     try:
                                         shutil.copy2("images/" + mfile, out_path + media_path + mfile)
                                     except Exception as e:
-                                        if attempt == 2:
+                                        #print ("Image copy error: " + str(e))
+                                        if attempt == 20:
                                             print ("Image file 'images/" + mfile + "' missing or not accessible!!")
                                             continue
-                                        time.sleep(0.25)
+                                        time.sleep(1.0)
+                            #check filecount in images matches file count 
 
 
             
@@ -466,19 +529,21 @@ def format_relations(sm_nodes, infile, crelations):
     relations =  root.findall("./mindmap/relations/relation")
     for relation in relations:
         full_relation = "- (" + relation.get('source') + ") " + sm_nodes[int(relation.get('source'))].title
+        note = None
         for note in relation.findall("children/text/note"):
-            full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
-            #full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
+            #markdown not supported in Canvas edges full_relation += "-> " + replace_with_markdown(str(note.text).replace('\n', ' ').strip())
+            full_relation += "-> *" + str(note.text).replace('\n', ' ').strip() + "*"
         full_relation += " -> (" + relation.get('target') + ") " + sm_nodes[int(relation.get('target'))].title
         output_list.append("\t" + full_relation + "\n")
-        canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(note.text).replace('\n', ' ').strip()))
+        cantext = note.text if (note is not None) else ""
+        canvas_relation = Relation(from_node=int(relation.get('source')), to_node=int(relation.get('target')), text=replace_with_markdown(str(cantext).replace('\n', ' ').strip()))
         crelations.append(canvas_relation)
     return output_list
 
 
-def write_output(infile, outfile, numbered, vf, ocanvas):
+def write_output(infile, outfile, numbered, vf, ocanvas, maponly):
     # load smmx xml content
-    sm_nodes = parse_mind_map(infile)
+    sm_nodes = parse_mind_map(infile, ocanvas, maponly)
 
     #output
     f = open(outfile,"w", encoding='utf8')
@@ -508,11 +573,17 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
 
         for node in sm_nodes:
             canvas.set_base_path(out_path, canvas_vault)
-            c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=140.00)
             note_text = node.note + "\n\n" + node.outernote
-            if len(node.embedded_image) > 0:
-                note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
-            canvas.add_node(c_node, ".md", note_text)
+            cnheight = 70.0 if (len(note_text) < 40 and len(node.embedded_image) == 0 and len(node.title) < 20) else 100.0
+            cnheight = 170.0 if ((len(node.embedded_image) > 0) and not maponly) or (len(note_text) > 40) else cnheight
+            if not maponly:
+                c_node = CanvasNode(type="file", file = None, title=node.title, text="", id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=cnheight)
+                if len(node.embedded_image) > 0:
+                    note_text = "![](" + media_path + node.embedded_image + ")\n" + node.link + "\n" + note_text
+                canvas.add_node(c_node, ".md", note_text)
+            else:
+                c_node = CanvasNode(type="text", file = None, title="", text=node.title + "\n\n" + note_text, id=node.guid, x=float(node.x), y=float(node.y), width=300.00, height=cnheight)
+                canvas.add_node(c_node, "", note_text)              
 
         for parent, edge in enumerate(ee):
             pvals = edge.split(",")
@@ -524,7 +595,7 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                     relation = sm_nodes[j].relationnote
                     if ":" in relation:
                         relation = relation.split(":")[1].strip().split(")")[1].strip()
-                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation)
+                    c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), pvals[1], from_to[0], vals[1], from_to[1], relation, '')
                     canvas.add_edge(c_edge)
 
         imagelist = []
@@ -541,17 +612,40 @@ def write_output(infile, outfile, numbered, vf, ocanvas):
                     if len(pair) > 0:
                         pair = str(pair)
                         top, left = pair.split(",")
-                        coordinates.append((node.id, top, left))
+                        coordinates.append((node.id, top, left, node.guid))
         ex_images = list(zip(imagelist, coordinates))
         for images in ex_images:
+            temp_node = Node()
+            temp_node.x = float(sm_nodes[int(images[1][0])].x) + float(images[1][1])
+            temp_node.y = float(sm_nodes[int(images[1][0])].y) + float(images[1][2])
+            temp_node.width = 300.00
+            temp_node.height = 150.00
+            sm_nodes[int(images[1][0])].width = 300.00
+            sm_nodes[int(images[1][0])].height = 150.00
+            p = determine_relative_position(sm_nodes[int(images[1][0])], temp_node)
+            from_to = p.split(",")
+
             c_node = CanvasNode(type="file", file = None, title=images[0].split(".")[0], text="", 
                     id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(sm_nodes[int(images[1][0])].x) + float(images[1][1]), y=float(sm_nodes[int(images[1][0])].y) + float(images[1][2]), width=300.00, height=140.00)
             canvas.add_node(c_node, ".png", "")
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), sm_nodes[int(images[1][0])].guid, from_to[0], c_node.id,  from_to[1], '', "None")
+            canvas.add_edge(c_edge)
+
+        for node in sm_nodes:
+            if len(node.embedded_image) > 0 and maponly:
+                image_title = node.embedded_image.split(".")[0]
+                c_node = CanvasNode(type="file", file = None, title=image_title, text="", 
+                    id=string_to_hexhash(uuid.uuid4().hex, 16), x=float(node.x) - 120.00, y=float(node.y), width=300.00, height=140.00)
+                canvas.add_node(c_node, ".png", "") 
+                #future work - add edge to embedded images
+                # c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), c_node.id, 
+                                    #from_to[0], canvas.nodes[crel.to_node].id, from_to[1], '', '')
+
 
         for crel in canvas_relations:
             p = determine_relative_position(canvas.nodes[crel.from_node], canvas.nodes[crel.to_node])
             from_to = p.split(",")
-            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), canvas.nodes[crel.from_node].id, from_to[0], canvas.nodes[crel.to_node].id, from_to[1], crel.text)
+            c_edge = CanvasEdge(string_to_hexhash(uuid.uuid4().hex, 16), canvas.nodes[crel.from_node].id, from_to[0], canvas.nodes[crel.to_node].id, from_to[1], crel.text, '')
             canvas.add_edge(c_edge)
 
 
@@ -568,9 +662,11 @@ def string_to_hexhash(alphanumeric_string, hash_len):
 
 def main():
 
-    print ("\n** Mindmap Markdown v-0.1.0 **\n")
+
+    print ("\n** Mindmap Markdown v-0.2.3 **\n")
        #try:
             #return(self._configdict[key])
+
 
     configdict = load_configs()
     in_path = configdict["input_path"]
@@ -588,6 +684,8 @@ def main():
                     help="Flag for numbered nodes")
     parser.add_argument("--canvas", "-c", default=False, action="store_true",
                     help="Flag for output of Obsidian canvas")
+    parser.add_argument("--textnodes", "-t", default=False, action="store_true",
+                    help="Flag for output of Obsidian canvas")
     args = parser.parse_args()
 
 
@@ -596,7 +694,11 @@ def main():
     batch_dir = args.directory
     numbered = args.numbered
     ocanvas = args.canvas
+    maponly = args.textnodes
+
     #ocanvas = True
+    #maponly = True
+    #numbered = True
     nums = False
 
     if ocanvas and batch_dir:
@@ -649,7 +751,8 @@ def main():
             outfile = vs.out_full_path
         print ("Mindmap: " + infile + " ----> Markdown: " + outfile)
         unzip_file(infile, '.')
-        write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas)
+
+        write_output(DEFAULT_MINDMAP, outfile, nums, vs, ocanvas, maponly)
         if ocanvas:
             #print (canvas.object_to_json())
             cname = outfile.split(".")[0]
@@ -686,7 +789,7 @@ def main():
                         continue
                     outfile = ext[0] + ".md"
                     print ("Mindmap: " + f + " ----> Markdown: " + batch_dir + outfile)
-                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs, ocanvas)
+                    write_output(DEFAULT_MINDMAP, batch_dir + ext[0] + ".md", nums, vs, ocanvas, maponly)
 
     if not os.path.exists(vs.out_full_media_path):
         os.makedirs(vs.out_full_media_path)
@@ -696,6 +799,11 @@ def main():
         except:
             print ("Image file 'images/" + media + "' missing or not accessible!!")
             continue
+    for media in media_files:
+        if not os.path.isfile(vs.out_full_media_path + media):
+            print ("waiting...")
+            time.sleep(1)
+
 
 
 

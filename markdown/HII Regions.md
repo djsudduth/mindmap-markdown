@@ -35,5 +35,5 @@
 
 
 - Relations:
-	- (13) UV Ionization-> causes -> (9) Stromgren Sphere
-	- (11)  Cooling-> *caused by **molecular examples*** -> (19) Oxygen (OI, OII, OIII)
+	- (13) UV Ionization-> *causes* -> (9) Stromgren Sphere
+	- (11)  Cooling-> *\/caused by \*molecular examples\*\/* -> (19) Oxygen (OI, OII, OIII)
