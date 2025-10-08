@@ -367,7 +367,10 @@ def replace_with_markdown(text):
 
 def post_clean_markdown(text):
     if text is not None:
-        cleaned = re.sub(r'~~(.*?)~~', r'\1', text)
+        cleaned = re.sub(r'\*', r'', text)
+        cleaned = re.sub(r'~~(.*?)~~', r'\1', cleaned)
+        cleaned = re.sub(r'-(.*?)-', r'\1', cleaned)
+        cleaned = re.sub(r'_(.*?)_', r'\1', cleaned)
         cleaned = re.sub(r'</?(u|sub|sup)>', '', cleaned, flags=re.IGNORECASE)
         return(cleaned)
 
@@ -398,10 +401,10 @@ def parse_mind_map(infile, ocanvas, maponly):
         plist[topic.get('id')] = topic.get('parent')
         topic_node.id = topic.get('id')
         #topic_node.title = topic.get('text').replace('\\N',' ')
-        if (ocanvas and not maponly):
-            topic_node.title = topic.get('text')
-        else:
-            topic_node.title = replace_with_markdown(topic.get('text'))
+        #if (ocanvas and not maponly):
+        #    topic_node.title = topic.get('text')
+        #else:
+        topic_node.title = replace_with_markdown(topic.get('text'))
 
         if topic_node.title is not None and type(topic_node.title) != tuple:
             topic_node.title = topic_node.title.replace('\\N',' ')
